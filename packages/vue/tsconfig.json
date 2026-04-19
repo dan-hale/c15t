@@ -1,5 +1,6 @@
 {
-	"extends": "@c15t/typescript-config/base.json",
+	"extends": "./.nuxt/tsconfig.json",
+	"exclude": ["dist", "node_modules", "playground"],
 	"compilerOptions": {
 		"moduleResolution": "bundler",
 		"baseUrl": ".",
