@@ -4,8 +4,18 @@
 		"moduleResolution": "bundler",
 		"baseUrl": ".",
 		"paths": {
-			"~/*": ["./src/*"]
+			"#c15t/stub": ["./src/runtime/stub.vue.ts"],
+			"#c15t/config": ["./src/runtime/config.vue.ts"],
+			"#c15t/composables": ["./src/index.ts"]
 		}
 	},
-	"include": ["src"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.vue",
+		"src/env.d.ts",
+		"src/c15t-aliases.d.ts",
+		"src/nuxt-imports.d.ts"
+	],
+	"exclude": ["src/**/*.nuxt.ts", "src/runtime/stub-contract.ts"]
 }

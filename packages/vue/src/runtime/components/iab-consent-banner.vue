@@ -1,0 +1,489 @@
+<script setup lang="ts">
+import { computed, ref, toValue, watch } from 'vue';
+import { Teleport } from 'vue';
+import { useScrollLock } from '@vueuse/core';
+import { FocusScope } from 'reka-ui';
+import type { GlobalVendorList, NonIABVendor } from '@c15t/schema/types';
+import bannerStyles from '@c15t/styles/iab-consent-banner.module.css';
+import {
+	useConsentActiveUI,
+	useConsentConfig,
+	useConsentInit,
+	useConsentIabSelection,
+	type ConsentIabSelection,
+} from '#c15t/composables';
+import ConsentButton from './consent-button.vue';
+import ConsentTag from './consent-tag.vue';
+
+const MAX_DISPLAY_ITEMS = 5;
+const STANDALONE_PURPOSE_ID = 1;
+
+const props = withDefaults(
+	defineProps<{
+		primaryButton?: 'reject' | 'accept' | 'customize';
+	}>(),
+	{
+		primaryButton: 'customize',
+	},
+);
+
+const activeUI = useConsentActiveUI();
+const config = useConsentConfig();
+const init = useConsentInit();
+const iabSelection = useConsentIabSelection();
+
+const initValue = computed(() => toValue(init));
+const gvl = computed(() => initValue.value?.gvl ?? null);
+const customVendors = computed(() => initValue.value?.customVendors ?? []);
+
+const isOpen = computed(() => {
+	const models = config.value.iabBannerModels;
+	const model = initValue.value?.policy?.model;
+	const matchesModel =
+		!models?.length || (model !== undefined && models.includes(model));
+	return (
+		activeUI.value === 'banner' &&
+		initValue.value?.policy?.model === 'iab' &&
+		Boolean(gvl.value) &&
+		matchesModel
+	);
+});
+const visible = ref(false);
+
+const iabT = computed(() => {
+	const translations = toValue(init)?.translations?.translations as
+		| { iab?: Record<string, unknown> }
+		| undefined;
+	return translations?.iab as {
+		banner?: {
+			title?: string;
+			description?: string;
+			partnersLink?: string;
+			andMore?: string;
+			legitimateInterestNotice?: string;
+			scopeServiceSpecific?: string;
+		};
+		common?: {
+			acceptAll?: string;
+			rejectAll?: string;
+			customize?: string;
+		};
+	} | undefined;
+});
+
+function resolveBannerSummary(gvlData: GlobalVendorList, vendors: NonIABVendor[]) {
+	const vendorCount =
+		Object.keys(gvlData.vendors).length + vendors.length;
+
+	const purposesWithVendors = Object.entries(gvlData.purposes)
+		.filter(([id]) =>
+			Object.values(gvlData.vendors).some(
+				(vendor) =>
+					vendor.purposes?.includes(Number(id)) ||
+					vendor.legIntPurposes?.includes(Number(id)),
+			),
+		)
+		.map(([id, purpose]) => ({ id: Number(id), name: purpose.name }));
+
+	const standalonePurpose = purposesWithVendors.find(
+		(purpose) => purpose.id === STANDALONE_PURPOSE_ID,
+	);
+	const otherPurposes = purposesWithVendors.filter(
+		(purpose) => purpose.id !== STANDALONE_PURPOSE_ID,
+	);
+	const otherPurposeIds = new Set(otherPurposes.map((purpose) => purpose.id));
+
+	const stackScores: Array<{
+		name: string;
+		coveredPurposeIds: number[];
+		score: number;
+	}> = [];
+
+	for (const stack of Object.values(gvlData.stacks || {})) {
+		const coveredPurposeIds = stack.purposes.filter((purposeId) =>
+			otherPurposeIds.has(purposeId),
+		);
+		if (coveredPurposeIds.length >= 2) {
+			stackScores.push({
+				name: stack.name,
+				coveredPurposeIds,
+				score: coveredPurposeIds.length,
+			});
+		}
+	}
+
+	stackScores.sort((left, right) => right.score - left.score);
+
+	const selectedStacks: string[] = [];
+	const assignedPurposeIds = new Set<number>();
+	for (const { name, coveredPurposeIds } of stackScores) {
+		const unassigned = coveredPurposeIds.filter(
+			(purposeId) => !assignedPurposeIds.has(purposeId),
+		);
+		if (unassigned.length >= 2) {
+			selectedStacks.push(name);
+			for (const purposeId of unassigned) {
+				assignedPurposeIds.add(purposeId);
+			}
+		}
+	}
+
+	const uncoveredPurposes = otherPurposes.filter(
+		(purpose) => !assignedPurposeIds.has(purpose.id),
+	);
+
+	const specialFeatures = Object.entries(gvlData.specialFeatures || {})
+		.filter(([id]) =>
+			Object.values(gvlData.vendors).some((vendor) =>
+				vendor.specialFeatures?.includes(Number(id)),
+			),
+		)
+		.map(([, feature]) => feature.name);
+
+	const items: string[] = [];
+	if (standalonePurpose) {
+		items.push(standalonePurpose.name);
+	}
+	for (const stackName of selectedStacks) {
+		items.push(stackName);
+	}
+	for (const purpose of uncoveredPurposes) {
+		items.push(purpose.name);
+	}
+	for (const featureName of specialFeatures) {
+		items.push(featureName);
+	}
+
+	return {
+		vendorCount,
+		displayItems: items.slice(0, MAX_DISPLAY_ITEMS),
+		remainingCount: Math.max(0, items.length - MAX_DISPLAY_ITEMS),
+		isReady: true,
+	};
+}
+
+const bannerSummary = computed(() => {
+	if (!gvl.value) {
+		return {
+			isReady: false,
+			vendorCount: 0,
+			displayItems: [] as string[],
+			remainingCount: 0,
+		};
+	}
+
+	return resolveBannerSummary(gvl.value, customVendors.value);
+});
+
+function buildAcceptAllIab(
+	gvlData: GlobalVendorList,
+	vendors: NonIABVendor[],
+): ConsentIabSelection {
+	const purposeConsents: Record<number, boolean> = {};
+	const purposeLegitimateInterests: Record<number, boolean> = {};
+	for (const purposeId of Object.keys(gvlData.purposes)) {
+		purposeConsents[Number(purposeId)] = true;
+		purposeLegitimateInterests[Number(purposeId)] = true;
+	}
+
+	const vendorConsents: Record<string, boolean> = {};
+	const vendorLegitimateInterests: Record<string, boolean> = {};
+	for (const [vendorId, vendor] of Object.entries(gvlData.vendors)) {
+		const id = String(vendorId);
+		if (vendor.purposes && vendor.purposes.length > 0) {
+			vendorConsents[id] = true;
+		}
+		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
+			vendorLegitimateInterests[id] = true;
+		}
+	}
+	for (const vendor of vendors) {
+		const id = String(vendor.id);
+		if (vendor.purposes && vendor.purposes.length > 0) {
+			vendorConsents[id] = true;
+		}
+		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
+			vendorLegitimateInterests[id] = true;
+		}
+	}
+
+	const specialFeatureOptIns: Record<number, boolean> = {};
+	for (const featureId of Object.keys(gvlData.specialFeatures ?? {})) {
+		specialFeatureOptIns[Number(featureId)] = true;
+	}
+
+	return {
+		purposeConsents,
+		purposeLegitimateInterests,
+		vendorConsents,
+		vendorLegitimateInterests,
+		specialFeatureOptIns,
+		preferenceCenterTab: iabSelection.value.preferenceCenterTab,
+	};
+}
+
+function buildRejectAllIab(
+	gvlData: GlobalVendorList,
+	vendors: NonIABVendor[],
+): ConsentIabSelection {
+	const purposeConsents: Record<number, boolean> = { 1: true };
+	const purposeLegitimateInterests: Record<number, boolean> = {};
+	for (const purposeId of Object.keys(gvlData.purposes)) {
+		if (Number(purposeId) !== 1) {
+			purposeConsents[Number(purposeId)] = false;
+			purposeLegitimateInterests[Number(purposeId)] = false;
+		}
+	}
+
+	const vendorConsents: Record<string, boolean> = {};
+	const vendorLegitimateInterests: Record<string, boolean> = {};
+	for (const [vendorId, vendor] of Object.entries(gvlData.vendors)) {
+		const id = String(vendorId);
+		if (vendor.purposes && vendor.purposes.length > 0) {
+			vendorConsents[id] = false;
+		}
+		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
+			vendorLegitimateInterests[id] = false;
+		}
+	}
+	for (const vendor of vendors) {
+		const id = String(vendor.id);
+		if (vendor.purposes && vendor.purposes.length > 0) {
+			vendorConsents[id] = false;
+		}
+		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
+			vendorLegitimateInterests[id] = false;
+		}
+	}
+
+	const specialFeatureOptIns: Record<number, boolean> = {};
+	for (const featureId of Object.keys(gvlData.specialFeatures ?? {})) {
+		specialFeatureOptIns[Number(featureId)] = false;
+	}
+
+	return {
+		purposeConsents,
+		purposeLegitimateInterests,
+		vendorConsents,
+		vendorLegitimateInterests,
+		specialFeatureOptIns,
+		preferenceCenterTab: iabSelection.value.preferenceCenterTab,
+	};
+}
+
+const descriptionText = computed(() =>
+	(iabT.value?.banner?.description ?? '').replace(
+		'{partnerCount}',
+		String(bannerSummary.value.vendorCount),
+	),
+);
+
+const partnersLinkText = computed(() =>
+	(iabT.value?.banner?.partnersLink ?? '').replace(
+		'{count}',
+		String(bannerSummary.value.vendorCount),
+	),
+);
+
+const descriptionParts = computed(() => {
+	const text = descriptionText.value;
+	const link = partnersLinkText.value;
+	if (!link || !text.includes(link)) {
+		return { before: text, after: '' };
+	}
+
+	const [before, after] = text.split(link);
+	return { before: before ?? text, after: after ?? '' };
+});
+
+watch(
+	isOpen,
+	(open) => {
+		if (open) {
+			visible.value = true;
+			return;
+		}
+
+		if (toValue(config).disableAnimation) {
+			visible.value = false;
+			return;
+		}
+
+		const duration = Number.parseInt(
+			typeof document !== 'undefined'
+				? getComputedStyle(document.documentElement).getPropertyValue(
+						'--iab-consent-banner-animation-duration',
+					) || '200'
+				: '200',
+			10,
+		);
+		const timer = window.setTimeout(() => {
+			visible.value = false;
+		}, duration);
+		return () => window.clearTimeout(timer);
+	},
+	{ immediate: true },
+);
+
+function isPrimary(button: 'reject' | 'accept' | 'customize') {
+	return button === props.primaryButton;
+}
+
+function rejectAll() {
+	const gvlData = gvl.value;
+	if (!gvlData) {
+		return;
+	}
+
+	iabSelection.value = buildRejectAllIab(gvlData, customVendors.value);
+	activeUI.value = null;
+}
+
+function acceptAll() {
+	const gvlData = gvl.value;
+	if (!gvlData) {
+		return;
+	}
+
+	iabSelection.value = buildAcceptAllIab(gvlData, customVendors.value);
+	activeUI.value = null;
+}
+
+function openDialog() {
+	iabSelection.value.preferenceCenterTab = 'purposes';
+	activeUI.value = 'dialog';
+}
+
+function openVendors() {
+	iabSelection.value.preferenceCenterTab = 'vendors';
+	activeUI.value = 'dialog';
+}
+
+const scrollLock = computed(
+	() => initValue.value?.policy?.ui?.banner?.scrollLock ?? true,
+);
+
+useScrollLock(computed(() => Boolean(isOpen.value && scrollLock.value)));
+
+const shouldTrapFocus = computed(
+	() => Boolean(isOpen.value && (toValue(config).trapFocus ?? true)),
+);
+</script>
+
+<template>
+	<Teleport v-if="isOpen && gvl && bannerSummary.isReady" to="body">
+		<div
+			v-if="scrollLock"
+			v-bind="config.components?.['iab-banner']?.overlay"
+			data-testid="iab-consent-banner-overlay"
+			:class="[
+				bannerStyles.overlay,
+				visible ? bannerStyles.overlayVisible : bannerStyles.overlayHidden,
+			]"
+		/>
+		<div
+			v-bind="config.components?.['iab-banner']?.root"
+			data-testid="iab-consent-banner-root"
+			:class="[
+				bannerStyles.root,
+				visible ? bannerStyles.bannerVisible : bannerStyles.bannerHidden,
+			]"
+		>
+			<div :class="bannerStyles.cardShell">
+				<ConsentTag v-if="!config.iabBannerHideBranding" context="iab-banner" />
+				<FocusScope :trapped="shouldTrapFocus" :loop="shouldTrapFocus">
+					<div
+						v-bind="config.components?.['iab-banner']?.card"
+						data-testid="iab-consent-banner-card"
+						:class="bannerStyles.card"
+						:role="shouldTrapFocus ? 'dialog' : undefined"
+						:aria-modal="shouldTrapFocus ? 'true' : undefined"
+						:aria-label="iabT?.banner?.title"
+						tabindex="0"
+					>
+					<div
+						v-bind="config.components?.['iab-banner']?.header"
+						data-testid="iab-consent-banner-header"
+						:class="bannerStyles.header"
+					>
+						<h2 v-bind="config.components?.['iab-banner']?.title" :class="bannerStyles.title">
+							{{ iabT?.banner?.title }}
+						</h2>
+						<p :class="bannerStyles.description">
+							{{ descriptionParts.before }}
+							<button
+								type="button"
+								:class="bannerStyles.partnersLink"
+								data-testid="iab-consent-banner-partners-link"
+								@click="openVendors"
+							>
+								{{ partnersLinkText }}
+							</button>
+							{{ descriptionParts.after }}
+						</p>
+						<ul :class="bannerStyles.purposeList">
+							<li
+								v-for="(name, index) in bannerSummary.displayItems"
+								:key="`${name}-${index}`"
+							>
+								{{ name }}
+							</li>
+							<li
+								v-if="bannerSummary.remainingCount > 0"
+								:class="bannerStyles.purposeMore"
+							>
+								{{
+									(iabT?.banner?.andMore ?? '').replace(
+										'{count}',
+										String(bannerSummary.remainingCount),
+									)
+								}}
+							</li>
+						</ul>
+						<p :class="bannerStyles.legitimateInterestNotice">
+							{{ iabT?.banner?.legitimateInterestNotice }}
+							{{ iabT?.banner?.scopeServiceSpecific }}
+						</p>
+					</div>
+					<div
+						v-bind="config.components?.['iab-banner']?.footer"
+						data-testid="iab-consent-banner-footer"
+						:class="bannerStyles.footer"
+					>
+						<div :class="bannerStyles.footerButtonGroup">
+							<ConsentButton
+								:variant="isPrimary('reject') ? 'primary' : 'neutral'"
+								mode="stroke"
+								:class="bannerStyles.rejectButton"
+								data-testid="iab-consent-banner-reject-button"
+								@click="rejectAll"
+							>
+								{{ iabT?.common?.rejectAll }}
+							</ConsentButton>
+							<ConsentButton
+								:variant="isPrimary('accept') ? 'primary' : 'neutral'"
+								:mode="isPrimary('accept') ? 'filled' : 'stroke'"
+								:class="bannerStyles.acceptButton"
+								data-testid="iab-consent-banner-accept-button"
+								@click="acceptAll"
+							>
+								{{ iabT?.common?.acceptAll }}
+							</ConsentButton>
+						</div>
+						<div :class="bannerStyles.footerSpacer" />
+						<ConsentButton
+							:variant="isPrimary('customize') ? 'primary' : 'neutral'"
+							:mode="isPrimary('customize') ? 'filled' : 'stroke'"
+							:class="bannerStyles.customizeButton"
+							data-testid="iab-consent-banner-customize-button"
+							@click="openDialog"
+						>
+							{{ iabT?.common?.customize }}
+						</ConsentButton>
+					</div>
+					</div>
+				</FocusScope>
+			</div>
+		</div>
+	</Teleport>
+</template>

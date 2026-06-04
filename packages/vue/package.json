@@ -3,19 +3,59 @@
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs"
+		},
+		"./consent-root": {
+			"types": "./dist/runtime/components/consent-root.d.vue.ts",
+			"import": "./dist/runtime/components/consent-root.vue"
+		},
+		"./vite": {
+			"types": "./dist/vite.d.ts",
+			"import": "./dist/vite.mjs",
+			"require": "./dist/vite.cjs"
+		},
+		"nuxt": {
+			"types": "./dist/types.d.mts",
+			"import": "./dist/module.mjs"
+		}
 	},
+	"main": "./dist/index.mjs",
+	"files": [
+		"dist"
+	],
 	"scripts": {
-		"build": "tsc --noEmit",
-		"test": "vitest run --passWithNoTests"
+		"build": "nuxt-module-build build && unbuild --config build.lib.config.ts",
+		"dev:prepare": "nuxt-module-build build --stub",
+		"check-types": "tsc --noEmit",
+		"test": "vitest run"
 	},
 	"dependencies": {
-		"@c15t/ui": "workspace:*",
+		"@c15t/config": "workspace:*",
+		"@c15t/schema": "workspace:*",
+		"@c15t/styles": "workspace:*",
+		"@vueuse/core": "^14.3.0",
+		"defu": "^6.1.4",
+		"reka-ui": "^2.9.8",
+		"ufo": "^1.6.1",
 		"vue": "^3.5.13"
 	},
 	"devDependencies": {
 		"@c15t/typescript-config": "workspace:*",
+		"@c15t/vitest-config": "workspace:*",
+		"@nuxt/kit": "^4.4.7",
+		"@nuxt/module-builder": "^1.0.2",
 		"typescript": "5.9.3",
+		"unbuild": "^3.6.1",
 		"vitest": "4.0.15"
+	},
+	"peerDependencies": {
+		"nuxt": "^3.0.0 || ^4.0.0"
+	},
+	"peerDependenciesMeta": {
+		"nuxt": {
+			"optional": true
+		}
 	}
 }
