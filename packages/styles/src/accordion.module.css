@@ -75,22 +75,22 @@
 	}
 
 	/* Focus styles for item */
-	.item:focus-within:not(:has(.triggerInner:focus-visible)) {
+	.item:focus-within:not(:has(.trigger-inner:focus-visible)) {
 		background-color: var(--accordion-background-hover);
 		box-shadow: inset 0 0 0 1px var(--accordion-border-color);
 	}
 
 	:global(.c15t-dark)
-		.item:focus-within:not(:has(.triggerInner:focus-visible)) {
+		.item:focus-within:not(:has(.trigger-inner:focus-visible)) {
 		background-color: var(--accordion-background-hover-dark);
 		box-shadow: inset 0 0 0 1px var(--accordion-border-color-dark);
 	}
 
-	.item:has(.triggerInner:focus-visible) {
+	.item:has(.trigger-inner:focus-visible) {
 		box-shadow: var(--accordion-focus-shadow);
 	}
 
-	:global(.c15t-dark) .item:has(.triggerInner:focus-visible) {
+	:global(.c15t-dark) .item:has(.trigger-inner:focus-visible) {
 		box-shadow: var(--accordion-focus-shadow-dark);
 	}
 
@@ -103,7 +103,7 @@
 		overflow: visible;
 	}
 
-	.triggerInner {
+	.trigger-inner {
 		display: flex;
 		align-items: center;
 		gap: 0.625rem;
@@ -126,15 +126,15 @@
 		touch-action: manipulation;
 	}
 
-	.triggerInner [data-slot="accordion-arrow"] {
+	.trigger-inner [data-slot="accordion-arrow"] {
 		margin-inline-start: auto;
 	}
 
-	:global(.c15t-dark) .triggerInner {
+	:global(.c15t-dark) .trigger-inner {
 		color: var(--accordion-text-color-dark);
 	}
 
-	.triggerInner:focus-visible {
+	.trigger-inner:focus-visible {
 		outline: none;
 	}
 
@@ -149,8 +149,8 @@
 		color: var(--accordion-icon-color-dark);
 	}
 
-	.arrowOpen,
-	.arrowClose {
+	.arrow-open,
+	.arrow-close {
 		display: block;
 		width: var(--accordion-icon-size);
 		height: var(--accordion-icon-size);
@@ -158,36 +158,36 @@
 		flex-shrink: 0;
 	}
 
-	.arrowOpen {
+	.arrow-open {
 		color: var(--accordion-arrow-color);
 	}
 
-	:global(.c15t-dark) .arrowOpen {
+	:global(.c15t-dark) .arrow-open {
 		color: var(--accordion-arrow-color-dark);
 	}
 
-	.item:hover .arrowOpen {
+	.item:hover .arrow-open {
 		color: var(--accordion-icon-color);
 	}
 
-	:global(.c15t-dark) .item:hover .arrowOpen {
+	:global(.c15t-dark) .item:hover .arrow-open {
 		color: var(--accordion-icon-color-dark);
 	}
 
-	.arrowClose {
+	.arrow-close {
 		color: var(--accordion-icon-color);
 		display: none;
 	}
 
-	:global(.c15t-dark) .arrowClose {
+	:global(.c15t-dark) .arrow-close {
 		color: var(--accordion-icon-color-dark);
 	}
 
-	.item[data-state="open"] .arrowOpen {
+	.item[data-state="open"] .arrow-open {
 		display: none;
 	}
 
-	.item[data-state="open"] .arrowClose {
+	.item[data-state="open"] .arrow-close {
 		display: block;
 	}
 
@@ -212,7 +212,7 @@
 		overflow: hidden;
 	}
 
-	.contentInner {
+	.content-inner {
 		font-size: 0.875rem;
 		line-height: 1.25rem;
 		letter-spacing: -0.006em;
@@ -226,12 +226,12 @@
 		will-change: opacity, transform;
 	}
 
-	.content[data-state="closed"] .contentInner {
+	.content[data-state="closed"] .content-inner {
 		opacity: 0;
 		transform: translateY(-0.125rem);
 	}
 
-	:global(.c15t-dark) .contentInner {
+	:global(.c15t-dark) .content-inner {
 		color: var(--accordion-content-color-dark);
 	}
 
@@ -239,8 +239,8 @@
 	@media (prefers-reduced-motion: reduce) {
 		.item,
 		.content,
-		.arrowOpen,
-		.arrowClose {
+		.arrow-open,
+		.arrow-close {
 			transition: none;
 		}
 	}
@@ -251,7 +251,7 @@
 			background-color: var(--accordion-background-color);
 		}
 
-		.item:hover .arrowOpen {
+		.item:hover .arrow-open {
 			color: var(--accordion-arrow-color);
 		}
 	}

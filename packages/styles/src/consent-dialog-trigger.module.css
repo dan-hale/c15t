@@ -171,22 +171,22 @@
 }
 
 /* Corner positioning utilities */
-.bottomRight {
+.bottom-right {
 	right: var(--cdt-offset);
 	bottom: var(--cdt-offset);
 }
 
-.bottomLeft {
+.bottom-left {
 	bottom: var(--cdt-offset);
 	left: var(--cdt-offset);
 }
 
-.topRight {
+.top-right {
 	top: var(--cdt-offset);
 	right: var(--cdt-offset);
 }
 
-.topLeft {
+.top-left {
 	top: var(--cdt-offset);
 	left: var(--cdt-offset);
 }

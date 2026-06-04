@@ -74,7 +74,7 @@
 	}
 
 	/* Banner animation classes */
-	.bannerVisible {
+	.banner-visible {
 		opacity: 1;
 		transform: scale(1);
 		transition:
@@ -84,7 +84,7 @@
 			cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
-	.bannerHidden {
+	.banner-hidden {
 		opacity: 0;
 		transform: scale(0.95);
 		transition:
@@ -101,7 +101,7 @@
 	}
 
 	/* Card styles */
-	.cardShell {
+	.card-shell {
 		display: flex;
 		flex-direction: column;
 		width: min(100%, var(--iab-consent-banner-max-width));
@@ -195,7 +195,7 @@
 		color: var(--iab-consent-banner-description-color-dark);
 	}
 
-	.partnersLink {
+	.partners-link {
 		color: var(--iab-consent-banner-link-color);
 		font-weight: 500;
 		text-decoration: none;
@@ -206,15 +206,15 @@
 		font-size: inherit;
 	}
 
-	.partnersLink:hover {
+	.partners-link:hover {
 		text-decoration: underline;
 	}
 
-	:global(.c15t-dark) .partnersLink {
+	:global(.c15t-dark) .partners-link {
 		color: var(--iab-consent-banner-link-color-dark);
 	}
 
-	.purposeList {
+	.purpose-list {
 		font-size: 0.875rem;
 		line-height: 1.5;
 		color: var(--iab-consent-banner-description-color);
@@ -223,26 +223,26 @@
 		list-style-type: disc;
 	}
 
-	.purposeList li {
+	.purpose-list li {
 		margin-bottom: 0.25rem;
 	}
 
-	:global(.c15t-dark) .purposeList {
+	:global(.c15t-dark) .purpose-list {
 		color: var(--iab-consent-banner-description-color-dark);
 	}
 
-	.legitimateInterestNotice {
+	.legitimate-interest-notice {
 		font-size: 0.8125rem;
 		line-height: 1.5;
 		color: var(--iab-consent-banner-description-color);
 		margin-top: 0.25rem;
 	}
 
-	:global(.c15t-dark) .legitimateInterestNotice {
+	:global(.c15t-dark) .legitimate-interest-notice {
 		color: var(--iab-consent-banner-description-color-dark);
 	}
 
-	.privacyLink {
+	.privacy-link {
 		color: var(--iab-consent-banner-link-color);
 		text-decoration: none;
 		cursor: pointer;
@@ -252,11 +252,11 @@
 		font-size: inherit;
 	}
 
-	.privacyLink:hover {
+	.privacy-link:hover {
 		text-decoration: underline;
 	}
 
-	:global(.c15t-dark) .privacyLink {
+	:global(.c15t-dark) .privacy-link {
 		color: var(--iab-consent-banner-link-color-dark);
 	}
 
@@ -280,26 +280,26 @@
 		}
 	}
 
-	.footerButtonGroup {
+	.footer-button-group {
 		display: flex;
 		flex-direction: row;
 		gap: 0.5rem;
 	}
 
-	.footerSpacer {
+	.footer-spacer {
 		flex: 1;
 	}
 
-	.rejectButton,
-	.acceptButton,
-	.customizeButton {
+	.reject-button,
+	.accept-button,
+	.customize-button {
 		flex: 1;
 	}
 
 	@media (min-width: 640px) {
-		.rejectButton,
-		.acceptButton,
-		.customizeButton {
+		.reject-button,
+		.accept-button,
+		.customize-button {
 			flex: none;
 		}
 	}
@@ -312,13 +312,13 @@
 	}
 
 	/* Animation classes for overlay */
-	.overlayVisible {
+	.overlay-visible {
 		opacity: 1;
 		transition: opacity var(--iab-consent-banner-animation-duration)
 			var(--iab-consent-banner-animation-timing);
 	}
 
-	.overlayHidden {
+	.overlay-hidden {
 		opacity: 0;
 		transition: opacity var(--iab-consent-banner-animation-duration)
 			var(--iab-consent-banner-animation-timing);
@@ -330,10 +330,10 @@
 
 	/* Reduced motion preference */
 	@media (prefers-reduced-motion: reduce) {
-		.bannerVisible,
-		.bannerHidden,
-		.overlayVisible,
-		.overlayHidden {
+		.banner-visible,
+		.banner-hidden,
+		.overlay-visible,
+		.overlay-hidden {
 			transition: none;
 		}
 

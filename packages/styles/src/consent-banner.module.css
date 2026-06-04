@@ -69,7 +69,7 @@
 
 	/* Banner animation — driven by data-visible on the root element */
 	.root:not(:global(.headless))[data-visible="true"],
-	.bannerVisible:not(:global(.headless)) {
+	.banner-visible:not(:global(.headless)) {
 		opacity: 1;
 		transform: translateY(0);
 		transition:
@@ -80,7 +80,7 @@
 	}
 
 	.root:not(:global(.headless))[data-visible="false"],
-	.bannerHidden:not(:global(.headless)) {
+	.banner-hidden:not(:global(.headless)) {
 		opacity: 0;
 		transform: translateY(50px);
 		transition:
@@ -97,22 +97,22 @@
 		}
 	}
 
-	.bottomLeft:not(:global(.headless)) {
+	.bottom-left:not(:global(.headless)) {
 		left: 0px;
 		bottom: 0px;
 	}
 
-	.bottomRight:not(:global(.headless)) {
+	.bottom-right:not(:global(.headless)) {
 		right: 0px;
 		bottom: 0px;
 	}
 
-	.topLeft:not(:global(.headless)) {
+	.top-left:not(:global(.headless)) {
 		left: 0px;
 		top: 0px;
 	}
 
-	.topRight:not(:global(.headless)) {
+	.top-right:not(:global(.headless)) {
 		right: 0px;
 		top: 0px;
 	}
@@ -129,7 +129,7 @@
 		overflow: hidden;
 	}
 
-	.cardShell:not(:global(.headless)) {
+	.card-shell:not(:global(.headless)) {
 		display: flex;
 		flex-direction: column;
 		width: min(100%, var(--consent-banner-max-width));
@@ -166,22 +166,22 @@
 		outline-offset: 2px;
 	}
 
-	.rejectButton:not(:global(.headless)) {
+	.reject-button:not(:global(.headless)) {
 		width: 100%;
 	}
 
-	.acceptButton:not(:global(.headless)) {
+	.accept-button:not(:global(.headless)) {
 		width: 100%;
 	}
 
-	.customizeButton:not(:global(.headless)) {
+	.customize-button:not(:global(.headless)) {
 		width: 100%;
 	}
 
 	@media (min-width: 640px) {
-		.rejectButton,
-		.acceptButton,
-		.customizeButton:not(:global(.headless)) {
+		.reject-button,
+		.accept-button,
+		.customize-button:not(:global(.headless)) {
 			width: auto;
 		}
 	}
@@ -231,34 +231,34 @@
 		}
 	}
 
-	.footerSubGroup:not(:global(.headless)) {
+	.footer-sub-group:not(:global(.headless)) {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
 	}
 
-	.footerSubGroup:not(:global(.headless)) button {
+	.footer-sub-group:not(:global(.headless)) button {
 		flex-grow: 1;
 	}
 
-	.footerFill:not(:global(.headless)) {
+	.footer-fill:not(:global(.headless)) {
 		flex-direction: column;
 	}
 
-	.footerColumn:not(:global(.headless)) {
+	.footer-column:not(:global(.headless)) {
 		flex-direction: column;
 	}
 
-	.footerSubGroupFill:not(:global(.headless)) {
+	.footer-sub-group-fill:not(:global(.headless)) {
 		width: 100%;
 	}
 
-	.footerSubGroupColumn:not(:global(.headless)) {
+	.footer-sub-group-column:not(:global(.headless)) {
 		width: 100%;
 	}
 
-	.actionButtonFill:not(:global(.headless)) {
+	.action-button-fill:not(:global(.headless)) {
 		width: 100%;
 	}
 
@@ -295,14 +295,14 @@
 
 	/* Overlay animation — driven by data-visible on the overlay element */
 	.overlay:not(:global(.headless))[data-visible="true"],
-	.overlayVisible:not(:global(.headless)) {
+	.overlay-visible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-banner-animation-duration)
 			var(--consent-banner-animation-timing);
 	}
 
 	.overlay:not(:global(.headless))[data-visible="false"],
-	.overlayHidden:not(:global(.headless)) {
+	.overlay-hidden:not(:global(.headless)) {
 		opacity: 0;
 		transition: opacity var(--consent-banner-animation-duration)
 			var(--consent-banner-animation-timing);
@@ -316,12 +316,12 @@
 	@media (prefers-reduced-motion: reduce) {
 		.root[data-visible="true"],
 		.root[data-visible="false"],
-		.bannerVisible,
-		.bannerHidden,
+		.banner-visible,
+		.banner-hidden,
 		.overlay[data-visible="true"],
 		.overlay[data-visible="false"],
-		.overlayVisible,
-		.overlayHidden:not(:global(.headless)) {
+		.overlay-visible,
+		.overlay-hidden:not(:global(.headless)) {
 			transition: none;
 		}
 

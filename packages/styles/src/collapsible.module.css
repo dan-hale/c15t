@@ -50,12 +50,12 @@
 		pointer-events: none;
 	}
 
-	.contentViewport {
+	.content-viewport {
 		min-height: 0;
 		overflow: hidden;
 	}
 
-	.contentInner {
+	.content-inner {
 		color: var(--collapsible-content-color);
 		opacity: 1;
 		transform: translateY(0);
@@ -65,7 +65,7 @@
 		will-change: opacity, transform;
 	}
 
-	.content[data-state="closed"] .contentInner {
+	.content[data-state="closed"] .content-inner {
 		opacity: 0;
 		transform: translateY(-0.125rem);
 	}
@@ -73,7 +73,7 @@
 	@media (prefers-reduced-motion: reduce) {
 		.root,
 		.content,
-		.contentInner {
+		.content-inner {
 			transition: none;
 		}
 	}

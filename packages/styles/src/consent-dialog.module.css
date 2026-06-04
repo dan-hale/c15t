@@ -102,14 +102,14 @@
 
 	/* Dialog animation — driven by data-visible on the root element */
 	.root:not(:global(.headless))[data-visible="true"],
-	.dialogVisible:not(:global(.headless)) {
+	.dialog-visible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
 	.root:not(:global(.headless))[data-visible="false"],
-	.dialogHidden:not(:global(.headless)) {
+	.dialog-hidden:not(:global(.headless)) {
 		opacity: 0;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
@@ -117,7 +117,7 @@
 
 	/* Content animation — driven by data-visible on the content element */
 	.content:not(:global(.headless))[data-visible="true"],
-	.contentVisible:not(:global(.headless)) {
+	.content-visible:not(:global(.headless)) {
 		opacity: 1;
 		transform: scale(1);
 		transition:
@@ -128,7 +128,7 @@
 	}
 
 	.content:not(:global(.headless))[data-visible="false"],
-	.contentHidden:not(:global(.headless)) {
+	.content-hidden:not(:global(.headless)) {
 		opacity: 0;
 		transform: scale(0.95);
 		transition:
@@ -168,7 +168,7 @@
 		padding: 0 0.5rem;
 	}
 
-	.brandingCopy:not(:global(.headless)) {
+	.branding-copy:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: baseline;
 		gap: 0.25rem;
@@ -176,15 +176,15 @@
 		white-space: nowrap;
 	}
 
-	.brandingText:not(:global(.headless)) {
+	.branding-text:not(:global(.headless)) {
 		font-weight: var(--c15t-font-weight-medium);
 	}
 
-	.brandingBy:not(:global(.headless)) {
+	.branding-by:not(:global(.headless)) {
 		font-weight: var(--c15t-font-weight-normal);
 	}
 
-	.brandingWordmarkLabel:not(:global(.headless)) {
+	.branding-wordmark-label:not(:global(.headless)) {
 		white-space: nowrap;
 		letter-spacing: -0.03em;
 	}
@@ -202,7 +202,7 @@
 		color: var(--consent-dialog-foreground-color-dark);
 	}
 
-	.brandingC15T:not(:global(.headless)) {
+	.branding-c15-t:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -211,7 +211,7 @@
 		height: auto;
 	}
 
-	.brandingWordmark:not(:global(.headless)) {
+	.branding-wordmark:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
@@ -221,7 +221,7 @@
 		white-space: nowrap;
 	}
 
-	.brandingC15TMark:not(:global(.headless)) {
+	.branding-c15-t-mark:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -230,7 +230,7 @@
 		height: var(--consent-dialog-branding-icon-height);
 	}
 
-	.brandingC15TMark:not(:global(.headless)) > svg {
+	.branding-c15-t-mark:not(:global(.headless)) > svg {
 		display: block;
 		flex: none;
 		aspect-ratio: 446 / 445;
@@ -239,7 +239,7 @@
 		max-width: 100%;
 	}
 
-	.brandingInth:not(:global(.headless)) {
+	.branding-inth:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -248,7 +248,7 @@
 		height: var(--consent-dialog-branding-icon-height);
 	}
 
-	.brandingInth:not(:global(.headless)) > svg {
+	.branding-inth:not(:global(.headless)) > svg {
 		display: block;
 		flex: none;
 		aspect-ratio: 88 / 90;
@@ -257,7 +257,7 @@
 		max-width: 100%;
 	}
 
-	.brandingTag:not(:global(.headless)) {
+	.branding-tag:not(:global(.headless)) {
 		position: absolute;
 		display: inline-flex;
 		align-items: center;
@@ -275,38 +275,38 @@
 		z-index: 2;
 	}
 
-	.brandingTag:not(:global(.headless)) .brandingCopy {
+	.branding-tag:not(:global(.headless)) .branding-copy {
 		font-size: var(--consent-dialog-branding-label-size);
 		letter-spacing: 0.01em;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.brandingTag .brandingText,
-	.brandingTag:not(:global(.headless)) .brandingBy {
+	.branding-tag .branding-text,
+	.branding-tag:not(:global(.headless)) .branding-by {
 		line-height: 1;
 	}
 
-	.brandingTag:not(:global(.headless)) .brandingWordmarkLabel {
+	.branding-tag:not(:global(.headless)) .branding-wordmark-label {
 		font-size: var(--consent-dialog-branding-label-size);
 		line-height: 1;
 	}
 
-	.brandingTag:not(:global(.headless)) .brandingWordmark {
+	.branding-tag:not(:global(.headless)) .branding-wordmark {
 		gap: 0.3125rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.brandingTag:not(:global(.headless)) .brandingC15TMark {
+	.branding-tag:not(:global(.headless)) .branding-c15-t-mark {
 		height: 0.9375rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.brandingTag:not(:global(.headless)) .brandingInth {
+	.branding-tag:not(:global(.headless)) .branding-inth {
 		height: 0.9375rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.brandingTagBanner:not(:global(.headless)) {
+	.branding-tag-banner:not(:global(.headless)) {
 		position: relative;
 		align-self: flex-end;
 		top: auto;
@@ -318,7 +318,7 @@
 		border-radius: 0.75rem 0.75rem 0 0;
 	}
 
-	.brandingTagDialog:not(:global(.headless)) {
+	.branding-tag-dialog:not(:global(.headless)) {
 		right: var(--consent-dialog-card-padding-mobile);
 		bottom: 0;
 		transform: translateY(calc(100% + 1px));
@@ -327,34 +327,34 @@
 	}
 
 	@media (min-width: 640px) {
-		.brandingTagDialog:not(:global(.headless)) {
+		.branding-tag-dialog:not(:global(.headless)) {
 			right: var(--consent-dialog-card-padding);
 		}
 	}
 
 	@media (max-width: 480px) {
-		.brandingTag:not(:global(.headless)) {
+		.branding-tag:not(:global(.headless)) {
 			gap: 0.375rem;
 			max-width: calc(100% - 1rem);
 			padding: 0.3125rem 0.625rem;
 		}
 
-		.brandingTag .brandingCopy,
-		.brandingTag:not(:global(.headless)) .brandingWordmarkLabel {
+		.branding-tag .branding-copy,
+		.branding-tag:not(:global(.headless)) .branding-wordmark-label {
 			font-size: 0.625rem;
 		}
 
-		.brandingTag .brandingC15TMark,
-		.brandingTag:not(:global(.headless)) .brandingInth {
+		.branding-tag .branding-c15-t-mark,
+		.branding-tag:not(:global(.headless)) .branding-inth {
 			height: 0.8125rem;
 		}
 	}
 
-	.headerWrapper:not(:global(.headless)) {
+	.header-wrapper:not(:global(.headless)) {
 		position: relative;
 	}
 
-	.closeButton:not(:global(.headless)) {
+	.close-button:not(:global(.headless)) {
 		position: absolute;
 		right: 22px;
 		top: 22px;
@@ -382,14 +382,14 @@
 
 	/* Overlay animation — driven by data-visible on the overlay element */
 	.overlay:not(:global(.headless))[data-visible="true"],
-	.overlayVisible:not(:global(.headless)) {
+	.overlay-visible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
 	.overlay:not(:global(.headless))[data-visible="false"],
-	.overlayHidden:not(:global(.headless)) {
+	.overlay-hidden:not(:global(.headless)) {
 		opacity: 0;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
@@ -486,7 +486,7 @@
 		border-color: var(--consent-dialog-stroke-color-dark);
 	}
 
-	.footer:not(:global(.headless)).brandingFooter {
+	.footer:not(:global(.headless)).branding-footer {
 		position: relative;
 		min-height: 0;
 		height: 0;
@@ -495,7 +495,7 @@
 		overflow: visible;
 	}
 
-	.footer:not(:global(.headless)).brandingFooter:empty {
+	.footer:not(:global(.headless)).branding-footer:empty {
 		display: none;
 	}
 
@@ -503,16 +503,16 @@
 	@media (prefers-reduced-motion: reduce) {
 		.root[data-visible="true"],
 		.root[data-visible="false"],
-		.dialogVisible,
-		.dialogHidden,
+		.dialog-visible,
+		.dialog-hidden,
 		.content[data-visible="true"],
 		.content[data-visible="false"],
-		.contentVisible,
-		.contentHidden,
+		.content-visible,
+		.content-hidden,
 		.overlay[data-visible="true"],
 		.overlay[data-visible="false"],
-		.overlayVisible,
-		.overlayHidden:not(:global(.headless)) {
+		.overlay-visible,
+		.overlay-hidden:not(:global(.headless)) {
 			transition: none;
 		}
 	}
