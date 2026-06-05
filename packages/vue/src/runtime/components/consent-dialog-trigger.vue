@@ -151,13 +151,13 @@ const triggerClass = computed(() => {
 });
 
 const triggerStyle = computed(() => ({
-	position: 'fixed',
+	position: 'fixed' as const,
 	zIndex: 9999,
-	...(style.value as Record<string, unknown>),
+	...(style.value as unknown as Record<string, string | number>),
 }));
 
 function openDialog() {
-	activeUI.value = 'dialog';
+	activeUI.value = 'manager';
 }
 </script>
 

@@ -46,8 +46,10 @@
 		"prepack": "bun run build",
 		"dev": "nuxt dev playground",
 		"dev:build": "nuxt build playground",
-		"dev:prepare": "nuxt-module-build build --stub",
-		"check-types": "tsc --noEmit",
+		"dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+		"check-types": "bun run check-types:nuxt && bun run check-types:vue",
+		"check-types:nuxt": "nuxt typecheck playground",
+		"check-types:vue": "vue-tsc -p tsconfig.vue.json --noEmit",
 		"test": "vitest run"
 	},
 	"dependencies": {
@@ -57,7 +59,7 @@
 		"@c15t/utils": "workspace:*",
 		"@vueuse/core": "^14.3.0",
 		"defu": "^6.1.4",
-		"reka-ui": "^2.9.8",
+		"reka-ui": "^2.9.9",
 		"ufo": "^1.6.1",
 		"vue": "^3.5.13"
 	},
@@ -68,7 +70,8 @@
 		"@nuxt/module-builder": "^1.0.2",
 		"nuxt": "^4.4.7",
 		"typescript": "5.9.3",
-		"vitest": "4.0.15"
+		"vitest": "4.0.15",
+		"vue-tsc": "^3.3.3"
 	},
 	"peerDependencies": {
 		"nuxt": "^3.0.0 || ^4.0.0"

@@ -8,7 +8,7 @@ export default defineBuildConfig({
 	entries: ['./src/vite', './src/index'],
 	declaration: true,
 	alias: {
-		'#c15t/stub': resolve(dir, 'src/runtime/stub.vue.ts'),
+		'#imports': resolve(dir, 'src/runtime/vue/stubs.ts'),
 	},
 	externals: [
 		'vue',

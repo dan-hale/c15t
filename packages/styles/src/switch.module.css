@@ -241,6 +241,30 @@
 		outline-color: var(--switch-focus-ring-dark);
 	}
 
+	.root-small:not(:global(.headless)) {
+		--switch-height: 1rem;
+		--switch-width: 1.75rem;
+		--switch-padding: 0.125rem;
+		--switch-thumb-size: 0.625rem;
+		--switch-thumb-size-disabled: 0.5rem;
+		--switch-thumb-translate: calc(
+			var(--switch-width) -
+			var(--switch-thumb-size) -
+			2 *
+			var(--switch-padding)
+		);
+	}
+
+	.track-small:not(:global(.headless)) {
+		width: 100%;
+		height: 100%;
+	}
+
+	.thumb-small:not(:global(.headless)) {
+		width: var(--switch-thumb-size);
+		height: var(--switch-thumb-size);
+	}
+
 	/* Reduced motion preference */
 	@media (prefers-reduced-motion: reduce) {
 		.root:not(:global(.headless)) .track,

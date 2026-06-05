@@ -1,5 +1,5 @@
 import { computed, type Ref } from 'vue';
-import { useCookie } from '#c15t/stub';
+import { useCookie } from '#imports';
 
 export type IabPreferenceTab = 'purposes' | 'vendors';
 

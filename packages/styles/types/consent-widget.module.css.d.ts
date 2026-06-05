@@ -1,11 +1,4 @@
 declare const styles: {
-	readonly accordionArrow: string;
-	readonly accordionContent: string;
-	readonly accordionItem: string;
-	readonly accordionList: string;
-	readonly accordionTitle: string;
-	readonly accordionTrigger: string;
-	readonly accordionTriggerInner: string;
 	readonly actionButtonFill: string;
 	readonly bottomLeft: string;
 	readonly bottomRight: string;
@@ -21,7 +14,6 @@ declare const styles: {
 	readonly footerSubGroupColumn: string;
 	readonly footerSubGroupFill: string;
 	readonly header: string;
-	readonly switch: string;
 	readonly title: string;
 	readonly topLeft: string;
 	readonly topRight: string;

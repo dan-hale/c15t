@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toValue, watch } from 'vue';
-import { Teleport } from 'vue';
-import { useScrollLock } from '@vueuse/core';
+import { Teleport, Transition } from 'vue';
 import { FocusScope } from 'reka-ui';
 import type {
 	GlobalVendorList,
@@ -28,6 +27,7 @@ import type {
 	IabVendorId,
 } from './iab-purpose-item.vue';
 import ConsentDialogTrigger from './consent-dialog-trigger.vue';
+import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 const STANDALONE_PURPOSE_ID = 1;
 
 const activeUI = useConsentActiveUI();
@@ -46,13 +46,16 @@ const isOpen = computed(() => {
 	const matchesModel =
 		!models?.length || (model !== undefined && models.includes(model));
 	return (
-		activeUI.value === 'dialog' &&
+		activeUI.value === 'manager' &&
 		initValue.value?.policy?.model === 'iab' &&
 		Boolean(gvl.value) &&
 		matchesModel
 	);
 });
-const visible = ref(false);
+const disableAnimation = computed(() => Boolean(toValue(config).disableAnimation));
+
+const showDialog = computed(() => isOpen.value && Boolean(gvl.value));
+
 const activeTab = ref<'purposes' | 'vendors'>('purposes');
 const selectedVendorId = ref<IabVendorId | null>(null);
 const specialPurposesExpanded = ref(false);
@@ -429,30 +432,12 @@ function syncDraftFromSelection() {
 watch(
 	isOpen,
 	(open) => {
-		if (open) {
-			visible.value = true;
-			syncDraftFromSelection();
-			activeTab.value = draftIab.value.preferenceCenterTab;
+		if (!open) {
 			return;
 		}
 
-		if (toValue(config).disableAnimation) {
-			visible.value = false;
-			return;
-		}
-
-		const duration = Number.parseInt(
-			typeof document !== 'undefined'
-				? getComputedStyle(document.documentElement).getPropertyValue(
-						'--iab-cd-animation-duration',
-					) || '150'
-				: '150',
-			10,
-		);
-		const timer = window.setTimeout(() => {
-			visible.value = false;
-		}, duration);
-		return () => window.clearTimeout(timer);
+		syncDraftFromSelection();
+		activeTab.value = draftIab.value.preferenceCenterTab;
 	},
 	{ immediate: true },
 );
@@ -522,7 +507,9 @@ const scrollLock = computed(
 	() => initValue.value?.policy?.ui?.dialog?.scrollLock ?? true,
 );
 
-useScrollLock(computed(() => Boolean(isOpen.value && scrollLock.value)));
+useConsentScrollLock(
+	computed(() => Boolean(isOpen.value && scrollLock.value)),
+);
 
 const shouldTrapFocus = computed(
 	() => Boolean(isOpen.value && (toValue(config).trapFocus ?? true)),
@@ -531,32 +518,53 @@ const shouldTrapFocus = computed(
 
 <template>
 	<ConsentDialogTrigger v-if="config.iabDialogShowTrigger" />
-	<Teleport v-if="isOpen && gvl" to="body">
-		<div
-			v-if="scrollLock"
-			v-bind="config.components?.['iab-dialog']?.overlay"
-			data-testid="iab-consent-dialog-overlay"
-			:class="[
-				dialogStyles.overlay,
-				visible ? dialogStyles.overlayVisible : dialogStyles.overlayHidden,
-			]"
-		/>
-		<div
-			v-bind="config.components?.['iab-dialog']?.root"
-			data-testid="iab-consent-dialog-root"
-			:class="[
-				dialogStyles.root,
-				visible ? dialogStyles.dialogVisible : dialogStyles.dialogHidden,
-			]"
+	<Teleport to="body">
+		<Transition
+			:disabled="disableAnimation"
+			:enter-from-class="dialogStyles.overlayHidden"
+			:enter-active-class="dialogStyles.overlayVisible"
+			:enter-to-class="dialogStyles.overlayVisible"
+			:leave-from-class="dialogStyles.overlayVisible"
+			:leave-active-class="dialogStyles.overlayHidden"
+			:leave-to-class="dialogStyles.overlayHidden"
 		>
+			<div
+				v-if="showDialog && scrollLock"
+				v-bind="config.components?.['iab-dialog']?.overlay"
+				data-testid="iab-consent-dialog-overlay"
+				:class="dialogStyles.overlay"
+			/>
+		</Transition>
+		<Transition
+			:disabled="disableAnimation"
+			:enter-from-class="dialogStyles.dialogHidden"
+			:enter-active-class="dialogStyles.dialogVisible"
+			:enter-to-class="dialogStyles.dialogVisible"
+			:leave-from-class="dialogStyles.dialogVisible"
+			:leave-active-class="dialogStyles.dialogHidden"
+			:leave-to-class="dialogStyles.dialogHidden"
+		>
+			<div
+				v-if="showDialog"
+				v-bind="config.components?.['iab-dialog']?.root"
+				data-testid="iab-consent-dialog-root"
+				:class="dialogStyles.root"
+			>
 			<FocusScope :trapped="shouldTrapFocus" :loop="shouldTrapFocus">
-				<div
-					v-bind="config.components?.['iab-dialog']?.card"
-					data-testid="iab-consent-dialog-card"
-					:class="[
-						dialogStyles.card,
-						visible ? dialogStyles.contentVisible : dialogStyles.contentHidden,
-					]"
+				<Transition
+					:disabled="disableAnimation"
+					:enter-from-class="dialogStyles.contentHidden"
+					:enter-active-class="dialogStyles.contentVisible"
+					:enter-to-class="dialogStyles.contentVisible"
+					:leave-from-class="dialogStyles.contentVisible"
+					:leave-active-class="dialogStyles.contentHidden"
+					:leave-to-class="dialogStyles.contentHidden"
+				>
+					<div
+						v-if="showDialog"
+						v-bind="config.components?.['iab-dialog']?.card"
+						data-testid="iab-consent-dialog-card"
+						:class="dialogStyles.card"
 					:role="shouldTrapFocus ? 'dialog' : undefined"
 					:aria-modal="shouldTrapFocus ? 'true' : undefined"
 					:aria-label="iabT?.preferenceCenter?.title"
@@ -858,8 +866,10 @@ const shouldTrapFocus = computed(
 				</div>
 
 				<ConsentTag v-if="!config.iabDialogHideBranding" context="iab-dialog" />
-			</div>
+					</div>
+				</Transition>
 			</FocusScope>
-		</div>
+			</div>
+		</Transition>
 	</Teleport>
 </template>

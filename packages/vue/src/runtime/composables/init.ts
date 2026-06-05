@@ -1,6 +1,6 @@
 import type { InitOutput } from '@c15t/schema/types';
 import { computed, type Ref } from 'vue';
-import { useFetch } from '#c15t/stub';
+import { useFetch, useRequestHeaders } from '#imports';
 import { useConsentConfig } from './config';
 import { useConsentLanguage } from './language';
 import { useRequestRegion } from './region';
@@ -8,20 +8,20 @@ import { useRequestRegion } from './region';
 export function useConsentInit(): Ref<InitOutput | null> {
 	const config = useConsentConfig();
 	const language = useConsentLanguage();
-	const region = useRequestRegion();
+	const { region, country } = useRequestRegion();
 	const query = computed(() => ({
-		country:
-			config.value.location?.countryCode ??
-			region.value.countryCode ??
-			undefined,
-		region:
-			config.value.location?.regionCode ?? region.value.regionCode ?? undefined,
+		regionCode: region,
+		countryCode: country,
 		language: language.value,
 	}));
 
-	return useFetch<InitOutput>('/init', {
-		baseURL: computed(() => config.value.backendURL ?? undefined),
+	console.log(query.value);
+
+	const { data } = useFetch<InitOutput>('/init', {
+		baseURL: config.value.backendURL,
 		query,
-		immediate: true,
-	}).data;
+		headers: useRequestHeaders(),
+	});
+
+	return computed(() => data.value ?? null);
 }

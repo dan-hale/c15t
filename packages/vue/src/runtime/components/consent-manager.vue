@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import {
+	AccordionContent,
+	AccordionHeader,
+	AccordionItem,
+	AccordionRoot,
+	AccordionTrigger,
+} from 'reka-ui';
+import accordionStyles from '@c15t/styles/accordion.module.css';
 import widgetStyles from '@c15t/styles/consent-widget.module.css';
 import { initConsentView } from '../utils/init-consent-view';
 import {
@@ -8,8 +16,6 @@ import {
 	useConsentInit,
 	useConsentSelection,
 } from '#c15t/composables';
-import ConsentAccordion from './consent-accordion.vue';
-import ConsentAccordionItem from './consent-accordion-item.vue';
 import ConsentPolicyFooter from './consent-policy-footer.vue';
 import ConsentSwitch from './consent-switch.vue';
 
@@ -18,7 +24,6 @@ const selection = useConsentSelection();
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 
-const openItem = ref<string>('');
 const draft = ref<string[]>([]);
 
 const consentState = initConsentView(init);
@@ -37,7 +42,7 @@ function syncDraft() {
 }
 
 watch(
-	() => activeUI.value === 'dialog',
+	() => activeUI.value === 'manager',
 	(open) => {
 		if (open) {
 			syncDraft();
@@ -88,40 +93,87 @@ function savePreferences() {
 <template>
 	<div
 		v-bind="config.components?.manager?.root"
-		data-testid="consent-manager-root"
-		:class="widgetStyles.widget"
+		data-testid="consent-widget-root"
+		:class="[
+			widgetStyles.widget,
+			{ 'disable-animation': config.value?.disableAnimation },
+		]"
 	>
-		<ConsentAccordion v-model="openItem" type="single">
-			<ConsentAccordionItem
+		<AccordionRoot
+			v-bind="config.components?.accordion?.root"
+			type="single"
+			collapsible
+			:unmount-on-hide="false"
+			data-testid="consent-widget-accordion"
+			:class="accordionStyles.list"
+		>
+			<AccordionItem
 				v-for="category in consentState.categories"
 				:key="category"
 				:value="category"
-				:disabled="isCategoryDisabled(category)"
+				v-bind="config.components?.['accordion-item']?.root"
+				:data-testid="`consent-widget-accordion-item-${category}`"
+				:unmount-on-hide="false"
+				:class="accordionStyles.item"
 			>
-				<template #trigger>
-					<div :class="widgetStyles.accordionTrigger">
-						<div :class="widgetStyles.accordionTriggerInner">
-							<span :class="widgetStyles.accordionTitle">
+				<AccordionHeader
+					:class="accordionStyles.itemHeader"
+					:data-testid="`consent-widget-accordion-trigger-${category}`"
+				>
+					<AccordionTrigger
+						v-bind="config.components?.['accordion-item']?.trigger"
+						:data-testid="`consent-widget-accordion-trigger-inner-${category}`"
+						:class="accordionStyles.trigger"
+					>
+						<span
+							:class="accordionStyles.arrow"
+							:data-testid="`consent-widget-accordion-arrow-${category}`"
+							aria-hidden="true"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+							>
+								<path d="M5 12h14M12 5v14" />
+							</svg>
+						</span>
+						<span :class="accordionStyles.header">
+							<span :class="accordionStyles.title">
 								{{ consentTitle(category) }}
 							</span>
-						</div>
-						<div :class="widgetStyles.switch">
-							<ConsentSwitch
-								:model-value="draft.includes(category)"
-								:disabled="isCategoryDisabled(category)"
-								:data-testid="`consent-widget-switch-${category}`"
-								@update:model-value="
-									(value) => toggleCategory(category, Boolean(value))
-								"
-							/>
+						</span>
+					</AccordionTrigger>
+				</AccordionHeader>
+				<div :class="accordionStyles.control">
+					<ConsentSwitch
+						size="small"
+						:model-value="draft.includes(category)"
+						:disabled="isCategoryDisabled(category)"
+						:aria-label="consentTitle(category)"
+						:data-testid="`consent-widget-switch-${category}`"
+						@update:model-value="
+							(value) => toggleCategory(category, Boolean(value))
+						"
+					/>
+				</div>
+				<AccordionContent
+					v-bind="config.components?.['accordion-item']?.content"
+					:data-testid="`consent-widget-accordion-content-${category}`"
+					:class="accordionStyles.content"
+				>
+					<div :class="accordionStyles.contentViewport">
+						<div :class="accordionStyles.contentInner">
+							{{ consentDescription(category) }}
 						</div>
 					</div>
-				</template>
-				<div :class="widgetStyles.accordionContent">
-					{{ consentDescription(category) }}
-				</div>
-			</ConsentAccordionItem>
-		</ConsentAccordion>
+				</AccordionContent>
+			</AccordionItem>
+		</AccordionRoot>
 
 		<ConsentPolicyFooter surface="dialog" @save="savePreferences" />
 	</div>

@@ -1,19 +1,13 @@
 import { getRegionFromHeaders } from '@c15t/utils';
-import { type ComputedRef, computed } from 'vue';
-import { useRequestHeaders } from '#c15t/stub';
+import { useRequestHeaders } from '#imports';
 
 export interface RequestRegion {
-	countryCode: string | null;
-	regionCode: string | null;
+	region?: string;
+	country?: string;
 }
 
-export function useRequestRegion(): ComputedRef<RequestRegion> {
-	return computed(() => {
-		const { country, region } = getRegionFromHeaders(useRequestHeaders());
-
-		return {
-			countryCode: country ?? null,
-			regionCode: region ?? null,
-		};
-	});
+export function useRequestRegion(): RequestRegion {
+	const headers = useRequestHeaders();
+	const location = getRegionFromHeaders(headers);
+	return location;
 }

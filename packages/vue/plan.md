@@ -131,7 +131,7 @@ Exported from `@c15t/vue` (`packages/vue/src/index.ts`):
 **Cookie / opt-in**
 
 - `ConsentRoot`, `ConsentBanner`, `ConsentDialog`, `ConsentManager`
-- `ConsentButton`, `ConsentAccordion`, `ConsentAccordionItem`
+- `ConsentRoot`, `ConsentBanner`, `ConsentDialog`, `ConsentManager`
 - `ConsentSwitch`, `ConsentToggle`
 - `ConsentDescription`, `ConsentBadge`, `ConsentTag`, `ConsentLink`
 
@@ -147,14 +147,12 @@ Exported from `@c15t/vue` (`packages/vue/src/index.ts`):
 
 Three layers per element:
 
-1. **Defaults** — CSS module base classes + presentation `data-*` attrs from props
-2. **Config overrides** — `useConsentComponent(name)` slot attrs (`class` / `style` only)
+1. **Defaults** — CSS module class keys (`accordionStyles.trigger`, `switchStyles.root`, …)
+2. **Config overrides** — `config.components` slot attrs (`class` / `style` only)
 3. **Consumer attrs** — fallthrough on the root element (`inheritAttrs`)
 
-**Behavior** — Reka UI sets Radix-compatible attrs (`data-state`, `data-disabled`, etc.);
-styled in CSS, never from config.
-
-**Do not** use legacy `*Variants()` factories from the React UI layer.
+**Behavior** — Reka UI sets Radix-compatible reactive attrs (`data-state`, `data-disabled`, …);
+styled in CSS via `[data-state="open"]` etc., never from config. Do not use `data-slot`.
 
 | Attribute kind | Source | Example |
 |----------------|--------|---------|
@@ -165,9 +163,8 @@ styled in CSS, never from config.
 
 | Component | Default CSS source |
 |-----------|-------------------|
-| banner, dialog, manager | `@c15t/styles/consent-*.module.css` |
-| iab-banner, iab-dialog | `@c15t/styles/iab-consent-*.module.css` |
-| accordion, accordion-item | `@c15t/styles/consent-widget.module.css` |
+| banner, dialog, manager shell | `@c15t/styles/consent-*.module.css` |
+| accordion (consent categories) | `@c15t/styles/accordion.module.css` |
 | button | `@c15t/styles/button.module.css` |
 | switch, toggle | `@c15t/styles/switch.module.css` |
 | link | `@c15t/styles/legal-links.module.css` |

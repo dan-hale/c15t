@@ -1,9 +1,9 @@
 import { parsePrimaryLanguage } from '@c15t/utils';
 import { computed, type Ref } from 'vue';
-import { useCookie, useRequestHeaders } from '#c15t/stub';
+import { useCookie, useRequestHeaders } from '#imports';
 
 export function useConsentLanguage(): Ref<string | undefined> {
-	const stored = useCookie<string>('c15t:language');
+	const stored = useCookie<string | null>('c15t:language');
 
 	return computed({
 		get: () => {
@@ -19,7 +19,7 @@ export function useConsentLanguage(): Ref<string | undefined> {
 			);
 		},
 		set: (value) => {
-			stored.value = value;
+			stored.value = value ?? null;
 		},
 	});
 }

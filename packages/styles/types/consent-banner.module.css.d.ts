@@ -1,7 +1,13 @@
 declare const styles: {
 	readonly acceptButton: string;
 	readonly actionButtonFill: string;
+	readonly bannerEnterActive: string;
+	readonly bannerEnterFrom: string;
+	readonly bannerEnterTo: string;
 	readonly bannerHidden: string;
+	readonly bannerLeaveActive: string;
+	readonly bannerLeaveFrom: string;
+	readonly bannerLeaveTo: string;
 	readonly bannerVisible: string;
 	readonly bottomLeft: string;
 	readonly bottomRight: string;
@@ -17,7 +23,13 @@ declare const styles: {
 	readonly footerSubGroupFill: string;
 	readonly header: string;
 	readonly overlay: string;
+	readonly overlayEnterActive: string;
+	readonly overlayEnterFrom: string;
+	readonly overlayEnterTo: string;
 	readonly overlayHidden: string;
+	readonly overlayLeaveActive: string;
+	readonly overlayLeaveFrom: string;
+	readonly overlayLeaveTo: string;
 	readonly overlayVisible: string;
 	readonly rejectButton: string;
 	readonly root: string;

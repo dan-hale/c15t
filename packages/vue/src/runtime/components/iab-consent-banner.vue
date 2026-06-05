@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, toValue, watch } from 'vue';
-import { Teleport } from 'vue';
-import { useScrollLock } from '@vueuse/core';
+import { computed, toValue } from 'vue';
+import { Teleport, Transition } from 'vue';
 import { FocusScope } from 'reka-ui';
 import type { GlobalVendorList, NonIABVendor } from '@c15t/schema/types';
 import bannerStyles from '@c15t/styles/iab-consent-banner.module.css';
@@ -14,6 +13,7 @@ import {
 } from '#c15t/composables';
 import ConsentButton from './consent-button.vue';
 import ConsentTag from './consent-tag.vue';
+import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 
 const MAX_DISPLAY_ITEMS = 5;
 const STANDALONE_PURPOSE_ID = 1;
@@ -48,7 +48,11 @@ const isOpen = computed(() => {
 		matchesModel
 	);
 });
-const visible = ref(false);
+const disableAnimation = computed(() => Boolean(toValue(config).disableAnimation));
+
+const showBanner = computed(
+	() => isOpen.value && Boolean(gvl.value) && bannerSummary.value.isReady,
+);
 
 const iabT = computed(() => {
 	const translations = toValue(init)?.translations?.translations as
@@ -296,35 +300,6 @@ const descriptionParts = computed(() => {
 	return { before: before ?? text, after: after ?? '' };
 });
 
-watch(
-	isOpen,
-	(open) => {
-		if (open) {
-			visible.value = true;
-			return;
-		}
-
-		if (toValue(config).disableAnimation) {
-			visible.value = false;
-			return;
-		}
-
-		const duration = Number.parseInt(
-			typeof document !== 'undefined'
-				? getComputedStyle(document.documentElement).getPropertyValue(
-						'--iab-consent-banner-animation-duration',
-					) || '200'
-				: '200',
-			10,
-		);
-		const timer = window.setTimeout(() => {
-			visible.value = false;
-		}, duration);
-		return () => window.clearTimeout(timer);
-	},
-	{ immediate: true },
-);
-
 function isPrimary(button: 'reject' | 'accept' | 'customize') {
 	return button === props.primaryButton;
 }
@@ -351,19 +326,21 @@ function acceptAll() {
 
 function openDialog() {
 	iabSelection.value.preferenceCenterTab = 'purposes';
-	activeUI.value = 'dialog';
+	activeUI.value = 'manager';
 }
 
 function openVendors() {
 	iabSelection.value.preferenceCenterTab = 'vendors';
-	activeUI.value = 'dialog';
+	activeUI.value = 'manager';
 }
 
 const scrollLock = computed(
 	() => initValue.value?.policy?.ui?.banner?.scrollLock ?? true,
 );
 
-useScrollLock(computed(() => Boolean(isOpen.value && scrollLock.value)));
+useConsentScrollLock(
+	computed(() => Boolean(isOpen.value && scrollLock.value)),
+);
 
 const shouldTrapFocus = computed(
 	() => Boolean(isOpen.value && (toValue(config).trapFocus ?? true)),
@@ -371,24 +348,38 @@ const shouldTrapFocus = computed(
 </script>
 
 <template>
-	<Teleport v-if="isOpen && gvl && bannerSummary.isReady" to="body">
-		<div
-			v-if="scrollLock"
-			v-bind="config.components?.['iab-banner']?.overlay"
-			data-testid="iab-consent-banner-overlay"
-			:class="[
-				bannerStyles.overlay,
-				visible ? bannerStyles.overlayVisible : bannerStyles.overlayHidden,
-			]"
-		/>
-		<div
-			v-bind="config.components?.['iab-banner']?.root"
-			data-testid="iab-consent-banner-root"
-			:class="[
-				bannerStyles.root,
-				visible ? bannerStyles.bannerVisible : bannerStyles.bannerHidden,
-			]"
+	<Teleport to="body">
+		<Transition
+			:disabled="disableAnimation"
+			:enter-from-class="bannerStyles.overlayHidden"
+			:enter-active-class="bannerStyles.overlayVisible"
+			:enter-to-class="bannerStyles.overlayVisible"
+			:leave-from-class="bannerStyles.overlayVisible"
+			:leave-active-class="bannerStyles.overlayHidden"
+			:leave-to-class="bannerStyles.overlayHidden"
 		>
+			<div
+				v-if="showBanner && scrollLock"
+				v-bind="config.components?.['iab-banner']?.overlay"
+				data-testid="iab-consent-banner-overlay"
+				:class="bannerStyles.overlay"
+			/>
+		</Transition>
+		<Transition
+			:disabled="disableAnimation"
+			:enter-from-class="bannerStyles.bannerHidden"
+			:enter-active-class="bannerStyles.bannerVisible"
+			:enter-to-class="bannerStyles.bannerVisible"
+			:leave-from-class="bannerStyles.bannerVisible"
+			:leave-active-class="bannerStyles.bannerHidden"
+			:leave-to-class="bannerStyles.bannerHidden"
+		>
+			<div
+				v-if="showBanner"
+				v-bind="config.components?.['iab-banner']?.root"
+				data-testid="iab-consent-banner-root"
+				:class="bannerStyles.root"
+			>
 			<div :class="bannerStyles.cardShell">
 				<ConsentTag v-if="!config.iabBannerHideBranding" context="iab-banner" />
 				<FocusScope :trapped="shouldTrapFocus" :loop="shouldTrapFocus">
@@ -484,6 +475,7 @@ const shouldTrapFocus = computed(
 					</div>
 				</FocusScope>
 			</div>
-		</div>
+			</div>
+		</Transition>
 	</Teleport>
 </template>

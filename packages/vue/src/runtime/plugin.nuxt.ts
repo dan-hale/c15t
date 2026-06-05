@@ -1,20 +1,20 @@
 import { defu } from 'defu';
-import { computed, provide } from 'vue';
+import { computed } from 'vue';
 import { defineNuxtPlugin, useAppConfig, useRuntimeConfig } from '#imports';
 import { consentConfigKey } from './composables/config';
 import type { ConsentConfig } from './config';
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
 	const appConfig = useAppConfig();
 	const runtimeConfig = useRuntimeConfig();
 
-	provide(
+	nuxtApp.vueApp.provide(
 		consentConfigKey,
 		computed(
 			() =>
 				defu(
-					runtimeConfig.public.c15t,
-					appConfig.c15t
+					appConfig.c15t,
+					runtimeConfig.public.c15t
 				) as Partial<ConsentConfig>
 		)
 	);

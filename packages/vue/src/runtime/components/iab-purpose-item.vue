@@ -156,10 +156,10 @@ function handlePurposeLiObjection() {
 
 			<div
 				v-if="legIntVendors.length > 0"
-				:class="dialogStyles.purposeLISection"
+				:class="dialogStyles.purposeLiSection"
 			>
-				<div :class="dialogStyles.purposeLISectionHeader">
-					<div :class="dialogStyles.purposeLIInfo">
+				<div :class="dialogStyles.purposeLiSectionHeader">
+					<div :class="dialogStyles.purposeLiInfo">
 						<span>
 							{{
 								(
@@ -218,7 +218,7 @@ function handlePurposeLiObjection() {
 					{{ iabT?.preferenceCenter?.purposeItem?.partnersUsingPurpose }}
 					({{ purpose.vendors.length }})
 				</button>
-				<ul v-if="showVendors" :class="dialogStyles.vendorList">
+				<ul v-if="showVendors" :class="dialogStyles.vendorLinks">
 					<li
 						v-for="vendor in purpose.vendors"
 						:key="String(vendor.id)"

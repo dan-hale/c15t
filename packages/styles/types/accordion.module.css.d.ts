@@ -1,12 +1,16 @@
 declare const styles: {
-	readonly arrowClose: string;
-	readonly arrowOpen: string;
+	readonly accordionSlideDown: string;
+	readonly accordionSlideUp: string;
+	readonly arrow: string;
 	readonly content: string;
 	readonly contentInner: string;
-	readonly icon: string;
+	readonly contentViewport: string;
+	readonly control: string;
+	readonly header: string;
 	readonly item: string;
-	readonly root: string;
+	readonly itemHeader: string;
+	readonly list: string;
+	readonly title: string;
 	readonly trigger: string;
-	readonly triggerInner: string;
 };
 export = styles;

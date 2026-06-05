@@ -5,15 +5,15 @@ import { initConsentView } from '../utils/init-consent-view';
 import {
 	useConsentActiveUI,
 	useConsentIabSelection,
-	type ConsentIabSelection,
 	useConsentInit,
 	useConsentSelection,
 	useConsentConfig,
-} from '#c15t/composables';
+} from '#imports';
 import ConsentBanner from './consent-banner.vue';
 import ConsentDialog from './consent-dialog.vue';
 import IabConsentBanner from './iab-consent-banner.vue';
 import IabConsentDialog from './iab-consent-dialog.vue';
+import type { ConsentIabSelection } from '~/src/composables';
 
 function buildDefaultIabSelection(
 	gvl: GlobalVendorList,
@@ -95,7 +95,7 @@ watch(init, (initValue) => {
 		);
 	} else {
 		const { categories } = consentView.value;
-		selection.value = selection.value.filter((category) =>
+		selection.value = selection.value.filter((category: string) =>
 			categories.includes(category),
 		);
 	}
@@ -107,7 +107,7 @@ watch(init, (initValue) => {
 	}
 
 	if (mode === 'dialog') {
-		activeUI.value = 'dialog';
+		activeUI.value = 'manager';
 	}
 });
 </script>

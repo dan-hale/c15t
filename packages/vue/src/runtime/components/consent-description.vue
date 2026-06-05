@@ -25,7 +25,7 @@ const moduleClass = computed(() => {
 		return dialogStyles.description;
 	}
 	if (props.context === 'manager') {
-		return widgetStyles.accordionContent;
+		return widgetStyles.description;
 	}
 	return bannerStyles.description;
 });

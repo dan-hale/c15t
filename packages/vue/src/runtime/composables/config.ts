@@ -10,8 +10,9 @@ import {
 } from 'vue';
 import type { ConsentConfig } from '../config';
 
-export const consentConfigKey: InjectionKey<Partial<ConsentConfig>> =
-	Symbol('c15t:config');
+export const consentConfigKey: InjectionKey<
+	MaybeRefOrGetter<Partial<ConsentConfig> | undefined>
+> = Symbol('c15t:config');
 
 export function useConsentConfig(): ComputedRef<ConsentConfig> {
 	const injected = inject(consentConfigKey);

@@ -34,7 +34,7 @@ const styles = computed(() =>
 );
 
 const footerState = computed(() =>
-	getPolicySurfaceState(init.value, props.surface)
+	getPolicySurfaceState(init.value ?? undefined, props.surface)
 );
 
 const footerClasses = computed(() => {
@@ -64,14 +64,16 @@ function actionButtonClass(action: PolicyUiAction) {
 	if (footerState.value.shouldFillActions) {
 		classes.push(styles.value.actionButtonFill);
 	}
-	if (action === 'accept') {
-		classes.push(styles.value.acceptButton);
-	}
-	if (action === 'reject') {
-		classes.push(styles.value.rejectButton);
-	}
-	if (action === 'customize') {
-		classes.push(styles.value.customizeButton);
+	if (props.surface === 'banner') {
+		if (action === 'accept') {
+			classes.push(bannerStyles.acceptButton);
+		}
+		if (action === 'reject') {
+			classes.push(bannerStyles.rejectButton);
+		}
+		if (action === 'customize') {
+			classes.push(bannerStyles.customizeButton);
+		}
 	}
 	return classes;
 }
@@ -115,7 +117,7 @@ function actionTestId(action: PolicyUiAction) {
 
 function onAction(action: PolicyUiAction) {
 	if (action === 'customize' && props.surface === 'banner') {
-		activeUI.value = 'dialog';
+		activeUI.value = 'manager';
 		return;
 	}
 	if (action === 'customize') {

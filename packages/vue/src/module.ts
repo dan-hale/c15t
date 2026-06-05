@@ -17,9 +17,7 @@ export default defineNuxtModule<ConsentConfig>({
 	defaults: () => defaultConsentConfig,
 	async setup(options, nuxt) {
 		const resolver = createResolver(import.meta.url);
-		nuxt.options.alias['#c15t/stub'] = resolver.resolve(
-			'./runtime/stub.nuxt.ts'
-		);
+
 		nuxt.options.alias['#c15t/composables'] = resolver.resolve(
 			'./runtime/composables/index.ts'
 		);
@@ -39,14 +37,38 @@ export default defineNuxtModule<ConsentConfig>({
 		});
 
 		addImports([
-			{ from: '#c15t/composables', name: 'useConsentConfig' },
-			{ from: '#c15t/composables', name: 'useConsentInit' },
-			{ from: '#c15t/composables', name: 'useConsentSelection' },
-			{ from: '#c15t/composables', name: 'useConsentIabSelection' },
-			{ from: '#c15t/composables', name: 'useConsentLanguage' },
-			{ from: '#c15t/composables', name: 'useConsentActiveUI' },
-			{ from: '#c15t/composables', name: 'useConsentComponent' },
-			{ from: '#c15t/composables', name: 'useRequestRegion' },
+			{
+				from: resolver.resolve('./runtime/composables/config'),
+				name: 'useConsentConfig',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/init'),
+				name: 'useConsentInit',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/selection'),
+				name: 'useConsentSelection',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/iabSelection'),
+				name: 'useConsentIabSelection',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/language'),
+				name: 'useConsentLanguage',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/activeUI'),
+				name: 'useConsentActiveUI',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/component'),
+				name: 'useConsentComponent',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/region'),
+				name: 'useRequestRegion',
+			},
 		]);
 	},
 });

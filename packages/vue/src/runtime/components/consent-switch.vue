@@ -1,17 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { SwitchRoot, SwitchThumb } from 'reka-ui';
 import switchStyles from '@c15t/styles/switch.module.css';
 import { useConsentConfig } from '#c15t/composables';
 
-defineProps<{
-	disabled?: boolean;
-	ariaLabel?: string;
-	indeterminate?: boolean;
-}>();
+const props = withDefaults(
+	defineProps<{
+		disabled?: boolean;
+		ariaLabel?: string;
+		indeterminate?: boolean;
+		size?: 'small' | 'medium';
+	}>(),
+	{
+		size: 'medium',
+	},
+);
 
 const model = defineModel<boolean>({ default: false });
 
 const config = useConsentConfig();
+
+const isSmall = computed(() => props.size === 'small');
 </script>
 
 <template>
@@ -22,10 +31,23 @@ const config = useConsentConfig();
 		:aria-label="ariaLabel"
 		:data-indeterminate="indeterminate ? true : undefined"
 		data-testid="consent-switch"
-		:class="switchStyles.root"
+		:class="[
+			switchStyles.root,
+			isSmall ? switchStyles.rootSmall : undefined,
+		]"
 	>
-		<span :class="switchStyles.track" data-slot="switch-track">
-			<SwitchThumb :class="switchStyles.thumb" data-slot="switch-thumb" />
+		<span
+			:class="[
+				switchStyles.track,
+				isSmall ? switchStyles.trackSmall : undefined,
+			]"
+		>
+			<SwitchThumb
+				:class="[
+					switchStyles.thumb,
+					isSmall ? switchStyles.thumbSmall : undefined,
+				]"
+			/>
 		</span>
 	</SwitchRoot>
 </template>
