@@ -1,3 +1,4 @@
+import { parsePrimaryLanguage } from '@c15t/utils';
 import { computed, type Ref } from 'vue';
 import { useCookie, useRequestHeaders } from '#c15t/stub';
 
@@ -8,7 +9,7 @@ export function useConsentLanguage(): Ref<string | undefined> {
 		get: () => {
 			const headers = useRequestHeaders();
 			const accept = headers['accept-language'] ?? headers['Accept-Language'];
-			const languageFromHeader = accept?.split(',')[0]?.split(';')[0]?.trim();
+			const languageFromHeader = parsePrimaryLanguage(accept);
 
 			return (
 				stored.value ||

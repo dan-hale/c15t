@@ -8,16 +8,15 @@ import {
 	type MaybeRefOrGetter,
 	toValue,
 } from 'vue';
-import type { ConsentConfig } from '#c15t/config';
+import type { ConsentConfig } from '../config';
 
-export const consentConfigKey: InjectionKey<
-	MaybeRefOrGetter<Partial<ConsentConfig> | undefined>
-> = Symbol('c15t:config');
+export const consentConfigKey: InjectionKey<Partial<ConsentConfig>> =
+	Symbol('c15t:config');
 
 export function useConsentConfig(): ComputedRef<ConsentConfig> {
-	const injected = inject(consentConfigKey, () => undefined, true);
+	const injected = inject(consentConfigKey);
 
 	return computed(
-		() => defu(defaultConsentConfig, toValue(injected)) as ConsentConfig
+		() => defu(toValue(injected), defaultConsentConfig) as ConsentConfig
 	);
 }

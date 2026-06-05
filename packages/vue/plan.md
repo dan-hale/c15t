@@ -47,7 +47,8 @@ export default defineAppConfig({
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import { c15tVue } from 'c15t';
+import { c15tVue } from '@c15t/vue/vue-plugin';
+import c15tVite from '@c15t/vue/vite';
 
 createApp(App).use(c15tVue, {
 	backendURL: 'https://example.inth.dev',
@@ -248,7 +249,7 @@ via `v-bind="theme.<slot>"`.
 
 ## Composables
 
-Implemented in `packages/vue/src/composables.ts`. Nuxt helpers in `composables.nuxt.ts`.
+Implemented in `packages/vue/src/runtime/composables/`. Nuxt-only: `runtime/plugin.nuxt.ts` and `runtime/stub.nuxt.ts`.
 
 ```ts
 const config = useConsentConfig();
@@ -276,27 +277,28 @@ Reads `config.trapFocus` (default `true`). Returns `{ trapFocus, shouldTrapFocus
 ### `ConsentRoot`
 
 ```html
-<ConsentRoot :config="{ backendURL: 'https://…' }" />
+<ConsentRoot />
 ```
 
-- Fetches `/init` when `backendURL` is set
+- Fetches `/init` when `backendURL` is set (from injected config)
 - Applies `config.tokens` to `document.documentElement` (`--{key}`)
 - Persists cookie selection and IAB selection to localStorage + POST `/subject`
 - Renders cookie or IAB UI based on policy model
 
-Custom hosts (Nuxt module, tests) inject state via `provideConsentState()` /
-`provideConsentNuxt()`.
-
 ### `useConsentConfig()`
 
-Returns injected `ConsentConfig` (supports `Ref`). Requires `<ConsentRoot>` or
-the c15t Vue plugin.
+Returns injected `ConsentConfig` (supports `Ref` / `ComputedRef`). Universal
+[`composables/config.ts`](src/runtime/composables/config.ts): `inject(consentConfigKey)` +
+`defu(defaultConsentConfig, toValue(injected))`.
 
-Config resolution order (Nuxt, first match at build/install):
+Config resolution order (later layers override earlier where merged):
 
-1. `nuxt.config.ts` (`c15t` module options)
-2. `app.config.ts` (`c15t` key)
-3. Vue plugin options (`app.use(c15t, { … })`)
+1. `defaultConsentConfig` — always applied in `useConsentConfig()`
+2. `runtimeConfig.public.c15t` — from `nuxt.config` `c15t` module options + env (build-time merge in module)
+3. `app.config.c15t` — reactive (Nuxt `plugin.nuxt.ts`; wins over runtime)
+4. Vue: optional `app.use(c15tVue, …)` provides same key as Nuxt plugin
+
+Custom hosts: `provide(consentConfigKey, …)` on an ancestor (no `ConsentRoot` config prop).
 
 ### `useConsentLanguage()`
 

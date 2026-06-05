@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import type { ConsentConfig } from '#c15t/config';
+import type { ConsentConfig } from '../config';
 import { useConsentConfig } from './config';
 
 type ComponentName = keyof NonNullable<ConsentConfig['components']>;

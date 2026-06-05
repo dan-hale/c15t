@@ -5,8 +5,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"#c15t/stub": ["./src/runtime/stub.vue.ts"],
-			"#c15t/config": ["./src/runtime/config.vue.ts"],
-			"#c15t/composables": ["./src/index.ts"]
+			"#c15t/composables": ["./src/runtime/composables/index.ts"]
 		}
 	},
 	"include": [

@@ -11,8 +11,7 @@ function pathResolve(...segments: string[]): string {
 export function c15tVue(): Plugin {
 	const aliases: Record<string, string> = {
 		'#c15t/stub': pathResolve('./runtime/stub.vue.ts'),
-		'#c15t/config': pathResolve('./runtime/config.vue.ts'),
-		'#c15t/composables': pathResolve('./index.ts'),
+		'#c15t/composables': pathResolve('./runtime/composables/index.ts'),
 	};
 
 	return {
