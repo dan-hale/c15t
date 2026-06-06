@@ -74,5 +74,10 @@ i18n.cache
 # Storybook build output
 storybook-static/
 debug-storybook.log
+
+# Nuxt module playground
+packages/vue/.nuxt
+packages/vue/playground/.nuxt
+packages/vue/playground/.output
 /inrepo_modules/
 /.inrepo/
