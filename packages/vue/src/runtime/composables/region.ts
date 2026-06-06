@@ -1,13 +1,17 @@
 import { getRegionFromHeaders } from '@c15t/utils';
-import { useRequestHeaders } from '#imports';
+import { type Ref } from 'vue';
+import { useRequestHeaders, useState } from '#imports';
 
 export interface RequestRegion {
 	region?: string;
 	country?: string;
 }
 
-export function useRequestRegion(): RequestRegion {
+export function useRequestRegion(): Ref<RequestRegion> {
 	const headers = useRequestHeaders();
-	const location = getRegionFromHeaders(headers);
+
+	const location = useState('c15t:location', () =>
+		getRegionFromHeaders(headers)
+	);
 	return location;
 }

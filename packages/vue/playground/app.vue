@@ -62,6 +62,7 @@ function openBanner() {
 		</button>
 	</nav>
 
+
 	<ConsentRoot :key="regionKey" />
 
 	<div v-if="init" class="playground-status">
@@ -72,7 +73,7 @@ function openBanner() {
 			<span v-if="init.location?.regionCode">/ {{ init.location.regionCode }}</span>
 		</p>
 		<p>policy: {{ init.policy?.id }} (ui: {{ init.policy?.ui?.mode }})</p>
-		<button v-if="init.policy?.ui?.mode === 'none'" type="button" @click="openBanner">
+		<button  @click="openBanner">
 			Open banner (dev)
 		</button>
 	</div>

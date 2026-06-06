@@ -2,18 +2,15 @@ export type ButtonVariant = 'primary' | 'neutral';
 
 export type ButtonMode = 'filled' | 'stroke' | 'lighter' | 'ghost';
 
-export type ConsentActiveUI =
-	| 'banner'
-	| 'dialog'
+export type ConsentActiveUI = 'banner' | 'manager';
+
+export type ConsentBannerPosition =
 	| 'top-left'
 	| 'top-right'
 	| 'bottom-left'
-	| 'bottom-right'
-	| 'center'
-	| 'sheet'
-	| 'drawer'
-	| 'drawer-right'
-	| 'manager';
+	| 'bottom-right';
+
+export type ConsentManagerMode = 'dialog' | 'sidebar-left' | 'sidebar-right';
 
 export type ConsentSaveAction = 'all' | 'necessary' | 'custom';
 
@@ -84,6 +81,16 @@ export interface ConsentConfig<T = Record<string, unknown>> {
 	iabDialogModels?: PolicyModel[];
 	bannerUiSource?: string;
 	dialogUiSource?: string;
+	/**
+	 * Viewport corner for the consent banner root.
+	 * @default 'bottom-left'
+	 */
+	bannerPosition?: ConsentBannerPosition;
+	/**
+	 * How the preference manager is presented when `activeUI` is `manager`.
+	 * @default 'dialog'
+	 */
+	managerMode?: ConsentManagerMode;
 	triggerDefaultPosition?: ConsentDialogTriggerPosition;
 	triggerPersistPosition?: boolean;
 	triggerShowWhen?: ConsentDialogTriggerVisibility;
@@ -229,4 +236,8 @@ export interface ConsentConfig<T = Record<string, unknown>> {
 	};
 }
 
-export { defaultConsentConfig } from './defaults';
+export {
+	DEFAULT_BANNER_POSITION,
+	DEFAULT_MANAGER_MODE,
+	defaultConsentConfig,
+} from './defaults';

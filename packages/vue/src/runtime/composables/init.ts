@@ -8,10 +8,10 @@ import { useRequestRegion } from './region';
 export function useConsentInit(): Ref<InitOutput | null> {
 	const config = useConsentConfig();
 	const language = useConsentLanguage();
-	const { region, country } = useRequestRegion();
+	const region = useRequestRegion();
 	const query = computed(() => ({
-		regionCode: region,
-		countryCode: country,
+		regionCode: region.value.region,
+		countryCode: region.value.country,
 		language: language.value,
 	}));
 

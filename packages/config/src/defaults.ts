@@ -1,4 +1,14 @@
-import type { ConsentConfig } from './index';
+import type {
+	ConsentBannerPosition,
+	ConsentConfig,
+	ConsentManagerMode,
+} from './index';
+
+export const DEFAULT_BANNER_POSITION =
+	'bottom-left' as const satisfies ConsentBannerPosition;
+
+export const DEFAULT_MANAGER_MODE =
+	'dialog' as const satisfies ConsentManagerMode;
 
 /** Default values aligned with `@c15t/ui` `defaultTheme` / `themeToVars()`. */
 export const defaultConsentConfig = {
@@ -6,7 +16,10 @@ export const defaultConsentConfig = {
 	hideBranding: false,
 	showTrigger: false,
 	bannerUiSource: 'banner',
+	bannerPosition: DEFAULT_BANNER_POSITION,
+	disableAnimation: false,
 	dialogUiSource: 'dialog',
+	managerMode: DEFAULT_MANAGER_MODE,
 	triggerDefaultPosition: 'bottom-right',
 	triggerPersistPosition: true,
 	triggerShowWhen: 'after-consent',
