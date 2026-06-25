@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useConsent, useConsentActiveUI, useConsentInit, useFetch, useRequestHeaders, useConsentConfig } from '#imports';
+import { useConsent, useConsentActiveUI, useConsentInit, useFetch, useRequestHeaders, useConsentConfig, useHead } from '#imports';
 import type { InitOutput } from '@c15t/schema/types';
 import { deriveActiveConsentUi } from '@c15t/utils';
 import { computed, watchEffect } from 'vue';
@@ -39,8 +39,6 @@ watchEffect(() => {
 		activeUI.value = deriveActiveConsentUi(consent.value, data.value)
 	}
 })
-
-import { useHead } from '@unhead/vue';
 
 useHead(computed(() => {
 	const style = Object.entries(config.value.tokens).map(([key, value]) => `--${key}: ${String(value)};`).join(' ');
