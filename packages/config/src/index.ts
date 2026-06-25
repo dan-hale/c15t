@@ -2,7 +2,7 @@ export type ButtonVariant = 'primary' | 'neutral';
 
 export type ButtonMode = 'filled' | 'stroke' | 'lighter' | 'ghost';
 
-export type ConsentActiveUI = 'banner' | 'manager';
+export type ConsentActiveUI = 'banner' | 'manager' | null;
 
 export type ConsentBannerPosition =
 	| 'top-left'

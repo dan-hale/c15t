@@ -23,17 +23,12 @@ const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 const init = useConsentInit();
 
-const managerMode = computed(
-	() => config.value.managerMode ?? DEFAULT_MANAGER_MODE,
-);
-const isDialogMode = computed(() => managerMode.value === 'dialog');
-
 const isOpen = computed(() => {
-	const model = init.value?.policy?.model;
-	const models = config.value.dialogModels ?? config.value.models;
-	const isVisible =
-		!models?.length || (model !== undefined && models.includes(model));
-	return activeUI.value === 'manager' && isVisible;
+	// const model = init.value?.policy?.model;
+	// const models = config.value.dialogModels ?? config.value.models;
+	// const isVisible =
+	// 	!models?.length || (model !== undefined && models.includes(model));
+	return activeUI.value === 'manager' ;
 });
 
 const disableAnimation = computed(() => Boolean(config.value.disableAnimation));
@@ -56,12 +51,8 @@ useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
 </script>
 
 <template>
-	<ConsentDialogTrigger
-		v-if="config.dialogShowTrigger ?? config.showTrigger"
-	/>
 	<DialogRoot
-		v-if="isDialogMode"
-		:open="isOpen"
+		:open="true"
 		:modal="shouldTrapFocus"
 		@update:open="onOpenChange"
 	>
@@ -125,66 +116,66 @@ useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
 			</DialogContent>
 		</DialogPortal>
 	</DialogRoot>
-	<Teleport v-else to="body">
-		<div
-			v-if="isOpen"
-			v-bind="config.components?.dialog?.root"
-			data-testid="consent-manager-sidebar-root"
-			:data-mode="managerMode"
-			data-state="open"
-			:class="[
-				dialogStyles.root,
-				{ 'disable-animation': disableAnimation },
-			]"
-		>
+</template>
+<!-- <Teleport v-else to="body">
+	<div
+		v-if="isOpen"
+		v-bind="config.components?.dialog?.root"
+		data-testid="consent-manager-sidebar-root"
+		:data-mode="managerMode"
+		data-state="open"
+		:class="[
+			dialogStyles.root,
+			{ 'disable-animation': disableAnimation },
+		]"
+	>
+			<div
+				v-if="scrollLock"
+				v-bind="config.components?.dialog?.overlay"
+				data-testid="consent-manager-sidebar-overlay"
+				:class="dialogStyles.overlay"
+				@click="onOpenChange(false)"
+			/>
+			<div :class="dialogStyles.container">
 				<div
-					v-if="scrollLock"
-					v-bind="config.components?.dialog?.overlay"
-					data-testid="consent-manager-sidebar-overlay"
-					:class="dialogStyles.overlay"
-					@click="onOpenChange(false)"
-				/>
-				<div :class="dialogStyles.container">
+					v-bind="config.components?.dialog?.card"
+					data-testid="consent-manager-sidebar-card"
+					:class="dialogStyles.card"
+				>
 					<div
-						v-bind="config.components?.dialog?.card"
-						data-testid="consent-manager-sidebar-card"
-						:class="dialogStyles.card"
+						v-bind="config.components?.dialog?.header"
+						:class="dialogStyles.header"
 					>
 						<div
-							v-bind="config.components?.dialog?.header"
-							:class="dialogStyles.header"
+							v-bind="config.components?.dialog?.title"
+							data-testid="consent-manager-sidebar-title"
+							:class="dialogStyles.title"
 						>
-							<div
-								v-bind="config.components?.dialog?.title"
-								data-testid="consent-manager-sidebar-title"
-								:class="dialogStyles.title"
-							>
-								{{
-									init?.translations?.translations?.consentManagerDialog
-										?.title
-								}}
-							</div>
-							<ConsentDescription context="dialog" />
+							{{
+								init?.translations?.translations?.consentManagerDialog
+									?.title
+							}}
 						</div>
-						<div
-							v-bind="config.components?.dialog?.content"
-							:class="dialogStyles.content"
-						>
-							<ConsentManager />
-						</div>
-						<div
-							v-bind="config.components?.dialog?.footer"
-							:class="dialogStyles.footer"
-						>
-							<ConsentTag
-								v-if="
-									!(config.dialogHideBranding ?? config.hideBranding)
-								"
-								context="dialog"
-							/>
-						</div>
+						<ConsentDescription context="dialog" />
+					</div>
+					<div
+						v-bind="config.components?.dialog?.content"
+						:class="dialogStyles.content"
+					>
+						<ConsentManager />
+					</div>
+					<div
+						v-bind="config.components?.dialog?.footer"
+						:class="dialogStyles.footer"
+					>
+						<ConsentTag
+							v-if="
+								!(config.dialogHideBranding ?? config.hideBranding)
+							"
+							context="dialog"
+						/>
 					</div>
 				</div>
 			</div>
-	</Teleport>
-</template>
+		</div>
+</Teleport> -->

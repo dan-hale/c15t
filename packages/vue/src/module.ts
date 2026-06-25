@@ -33,7 +33,7 @@ export default defineNuxtModule<ConsentConfig>({
 
 		addComponent({
 			name: 'ConsentRoot',
-			filePath: resolver.resolve('./runtime/components/consent-root.vue'),
+			filePath: resolver.resolve('./runtime/components/nuxt-consent-root.vue'),
 		});
 
 		addImports([
@@ -44,6 +44,10 @@ export default defineNuxtModule<ConsentConfig>({
 			{
 				from: resolver.resolve('./runtime/composables/init'),
 				name: 'useConsentInit',
+			},
+			{
+				from: resolver.resolve('./runtime/composables/consent'),
+				name: 'useConsent',
 			},
 			{
 				from: resolver.resolve('./runtime/composables/selection'),

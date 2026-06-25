@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { reactive, type HTMLAttributes } from 'vue';
 import {
 	AccordionContent,
 	AccordionHeader,
@@ -9,83 +9,56 @@ import {
 } from 'reka-ui';
 import accordionStyles from '@c15t/styles/accordion.module.css';
 import widgetStyles from '@c15t/styles/consent-widget.module.css';
-import { initConsentView } from '../utils/init-consent-view';
 import {
+	useConsent,
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
-	useConsentSelection,
-} from '#c15t/composables';
+} from '../composables';
 import ConsentPolicyFooter from './consent-policy-footer.vue';
 import ConsentSwitch from './consent-switch.vue';
 
 const init = useConsentInit();
-const selection = useConsentSelection();
+const consent = useConsent();
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 
-const draft = ref<string[]>([]);
-
-const consentState = initConsentView(init);
-
-function syncDraft() {
-	if (!init.value) {
-		return;
-	}
-
-	if (selection.value.length > 0) {
-		draft.value = [...selection.value];
-		return;
-	}
-
-	draft.value = [...consentState.value.preselected];
-}
-
-watch(
-	() => activeUI.value === 'manager',
-	(open) => {
-		if (open) {
-			syncDraft();
-		}
-	},
-	{ immediate: true },
-);
+const draft = reactive<string[]>([]);
 
 function consentTitle(category: string) {
-	const title = consentState.value.types[category]?.title;
-	if (title) {
-		return title;
-	}
+	const types = init.value?.translations?.translations
+		?.consentTypes as Record<string, { title?: string }> | undefined;
+	const title = types?.[category]?.title;
+	if (title) return title;
 
 	return category
 		.replace(/_/g, ' ')
 		.replace(/\b\w/g, (character) => character.toUpperCase());
 }
 
-function consentDescription(category: string) {
-	return consentState.value.types[category]?.description;
-}
-
-function isCategoryDisabled(category: string) {
-	return category === 'necessary';
-}
-
 function toggleCategory(category: string, enabled: boolean) {
 	if (enabled) {
-		if (!draft.value.includes(category)) {
-			draft.value.push(category);
+		if (!draft.includes(category)) {
+			draft.push(category);
 		}
 		return;
 	}
 
-	const index = draft.value.indexOf(category);
+	const index = draft.indexOf(category);
 	if (index >= 0) {
-		draft.value.splice(index, 1);
+		draft.splice(index, 1);
 	}
 }
 
-function savePreferences() {
-	selection.value = [...draft.value];
+function savePreferences(preference: 'all' | 'necessary' | string[]) {
+	if (preference === 'all') {
+		consent.value.categories = categories.map((category) => 'grant');
+	} else if (preference === 'necessary') {
+		consent.value.categories = categories.map((category) => 'grant');
+	} else {
+		consent.value.categories = preference.map((category) => 'grant');
+	}
+
 	activeUI.value = null;
 }
 </script>
@@ -96,11 +69,11 @@ function savePreferences() {
 		data-testid="consent-widget-root"
 		:class="[
 			widgetStyles.widget,
-			{ 'disable-animation': config.value?.disableAnimation },
+			{ 'disable-animation': config?.disableAnimation },
 		]"
 	>
 		<AccordionRoot
-			v-bind="config.components?.accordion?.root"
+			v-bind="config.components?.accordion?.root as Omit<HTMLAttributes, 'dir'>"
 			type="single"
 			collapsible
 			:unmount-on-hide="false"
@@ -108,7 +81,7 @@ function savePreferences() {
 			:class="accordionStyles.list"
 		>
 			<AccordionItem
-				v-for="category in consentState.categories"
+				v-for="category in init?.policy?.consent?.categories || ['necessary']"
 				:key="category"
 				:value="category"
 				v-bind="config.components?.['accordion-item']?.root"
@@ -153,7 +126,7 @@ function savePreferences() {
 					<ConsentSwitch
 						size="small"
 						:model-value="draft.includes(category)"
-						:disabled="isCategoryDisabled(category)"
+						:disabled="category === 'necessary'"
 						:aria-label="consentTitle(category)"
 						:data-testid="`consent-widget-switch-${category}`"
 						@update:model-value="
@@ -168,7 +141,7 @@ function savePreferences() {
 				>
 					<div :class="accordionStyles.contentViewport">
 						<div :class="accordionStyles.contentInner">
-							{{ consentDescription(category) }}
+							{{ ( init?.translations?.translations ?.consentTypes as Record<string,{ description?: string }>)?.[category]?.description }}
 						</div>
 					</div>
 				</AccordionContent>

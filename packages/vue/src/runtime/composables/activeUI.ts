@@ -1,7 +1,8 @@
-import type { ConsentActiveUI } from '@c15t/config';
-import type { Ref } from 'vue';
-import { useState } from '#imports';
+import { inject } from 'vue';
+import { symbolActiveUI } from '../utils/symbols';
 
-export function useConsentActiveUI(): Ref<ConsentActiveUI | null> {
-	return useState<ConsentActiveUI | null>('c15t:activeUI', () => null);
+export function useConsentActiveUI() {
+	const activeUI = inject(symbolActiveUI);
+	if (!activeUI) throw new Error('[c15t] Active UI not found');
+	return activeUI;
 }

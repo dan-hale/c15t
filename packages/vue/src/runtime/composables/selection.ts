@@ -1,17 +1,15 @@
-import { computed, type Ref } from 'vue';
-import { useCookie } from '#imports';
+import { interpretStoredConsent } from '@c15t/utils';
+import { type ComputedRef, computed, inject } from 'vue';
 
-const SELECTION_COOKIE = 'c15t:selection';
+import { symbolConsent, symbolInit } from '../utils/symbols';
 
-export function useConsentSelection(): Ref<string[]> {
-	const stored = useCookie<string[]>(SELECTION_COOKIE, {
-		default: () => [],
-	});
+export async function useConsentSelection(): Promise<ComputedRef<string[]>> {
+	const init = inject(symbolInit);
+	const consent = inject(symbolConsent);
 
-	return computed({
-		get: () => stored.value ?? [],
-		set: (value) => {
-			stored.value = value;
-		},
-	});
+	return computed(() =>
+		consent?.value && init?.value
+			? interpretStoredConsent(consent.value, init.value)
+			: []
+	);
 }

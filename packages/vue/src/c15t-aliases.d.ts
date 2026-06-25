@@ -10,6 +10,7 @@ declare module '#c15t/composables' {
 		useConsentIabSelection,
 		type ConsentIabSelection,
 	} from './runtime/composables/iabSelection';
+	export { useConsent } from './runtime/composables/consent';
 	export { useConsentInit } from './runtime/composables/init';
 	export { useConsentLanguage } from './runtime/composables/language';
 	export { useRequestRegion } from './runtime/composables/region';

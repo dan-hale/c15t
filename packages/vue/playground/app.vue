@@ -1,46 +1,16 @@
 <script setup lang="ts">
 const route = useRoute();
-const router = useRouter();
 
 const config = useConsentConfig();
 const init = useConsentInit();
 const activeUI = useConsentActiveUI();
 
 const regionPresets = [
-	{ id: 'california', label: 'California', country: 'US', region: 'CA' },
-	{ id: 'usa', label: 'USA', country: 'US' },
-	{ id: 'europe', label: 'Europe', country: 'DE' },
-	{ id: 'quebec', label: 'Quebec', country: 'CA', region: 'QC' },
+	{ id: 'california', label: 'California', to: "/?country=US&region=CA" },
+	{ id: 'usa', label: 'USA', to: '/?country=US' },
+	{ id: 'europe', label: 'Europe', to: '/?country=DE' },
+	{ id: 'quebec', label: 'Quebec', to: '/?country=CA&region=QC' },
 ] as const;
-
-const regionKey = computed(
-	() => `${route.query.country ?? ''}:${route.query.region ?? ''}`,
-);
-
-function isActive(preset: (typeof regionPresets)[number]) {
-	const country = route.query.country?.toString().toUpperCase();
-	const region = route.query.region?.toString().toUpperCase();
-
-	if (country !== preset.country) {
-		return false;
-	}
-
-	if ('region' in preset && preset.region) {
-		return region === preset.region;
-	}
-
-	return !region;
-}
-
-function setRegion(preset: (typeof regionPresets)[number]) {
-	router.push({
-		query: {
-			country: preset.country,
-			region:
-				'region' in preset && preset.region ? preset.region : undefined,
-		},
-	});
-}
 
 function openBanner() {
 	activeUI.value = 'banner';
@@ -50,22 +20,22 @@ function openBanner() {
 <template>
 	<nav class="region-toggle" aria-label="Region preview">
 		<span class="region-toggle__label">Region</span>
-		<button
-			v-for="preset in regionPresets"
-			:key="preset.id"
-			type="button"
+		<NuxtLink
+			v-for="{id, label, to} in regionPresets"
+			:key="id"
+			:to="to"
 			class="region-toggle__button"
-			:class="{ 'region-toggle__button--active': isActive(preset) }"
-			@click="setRegion(preset)"
+			active-class="region-toggle__button--active"
 		>
-			{{ preset.label }}
-		</button>
+			{{ label }}
+		</NuxtLink>
 	</nav>
 
 
-	<ConsentRoot :key="regionKey" />
+	<ConsentRoot :country="route.query.country" :region="route.query.region" />
 
 	<div v-if="init" class="playground-status">
+		{{ activeUI }}
 		<p>backend: {{ config.backendURL }}</p>
 		<p>
 			location:
