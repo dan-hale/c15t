@@ -47,6 +47,14 @@ export type ConsentDialogTriggerSize = 'sm' | 'md' | 'lg';
 
 export type ConsentDialogTriggerIcon = 'fingerprint' | 'settings' | 'branding';
 
+/** Standard consent category keys aligned with GDPR purpose groups. */
+export type ConsentCategory =
+	| 'necessary'
+	| 'functionality'
+	| 'experience'
+	| 'measurement'
+	| 'marketing';
+
 /**
  * Central consent configuration contract shared across framework packages.
  *
@@ -54,6 +62,12 @@ export type ConsentDialogTriggerIcon = 'fingerprint' | 'settings' | 'branding';
  */
 export interface ConsentConfig<T = Record<string, unknown>> {
 	backendURL?: string;
+	/**
+	 * Consent categories shown in the UI. Backend policy allowlists that include
+	 * optional categories narrow this set. A policy allowlist of only `necessary`
+	 * does not restrict optional categories. `necessary` is always included.
+	 */
+	consentCategories?: ConsentCategory[];
 	/** Overrides parsed request headers for `/init` (custom SSR, tests). */
 	location?: {
 		countryCode?: string | null;

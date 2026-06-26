@@ -14,5 +14,4 @@ declare module '#c15t/composables' {
 	export { useConsentInit } from './runtime/composables/init';
 	export { useConsentLanguage } from './runtime/composables/language';
 	export { useRequestRegion } from './runtime/composables/region';
-	export { useConsentSelection } from './runtime/composables/selection';
 }

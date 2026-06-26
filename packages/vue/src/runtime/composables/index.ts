@@ -6,4 +6,3 @@ export * from './iabSelection';
 export * from './init';
 export * from './language';
 export * from './region';
-export * from './selection';

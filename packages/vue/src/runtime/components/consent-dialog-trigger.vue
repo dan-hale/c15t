@@ -15,17 +15,17 @@ import {
 } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import {
+	useConsent,
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentIabSelection,
 	useConsentInit,
-	useConsentSelection,
 } from '#c15t/composables';
 
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 const init = useConsentInit();
-const selection = useConsentSelection();
+const { consent: activeConsentUi } = useConsent();
 const iabSelection = useConsentIabSelection();
 
 const STORAGE_KEY = 'c15t:dialog-trigger-position';
@@ -126,7 +126,7 @@ const hasConsented = computed(() => {
 		return hasIabConsent();
 	}
 
-	return selection.value.length > 0;
+	return activeConsentUi.value === null;
 });
 
 const isVisible = computed(() => {

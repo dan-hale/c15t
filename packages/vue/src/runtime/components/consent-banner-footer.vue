@@ -5,6 +5,10 @@
 import type { PolicyUiAction, PolicyUiActionGroup } from '@c15t/schema/types';
 import bannerStyles from '@c15t/styles/consent-banner.module.css';
 import {
+	getConsentAvailableCategories,
+	type CONSENT_CATEGORY,
+} from '@c15t/utils';
+import {
 	useConsent,
 	useConsentActiveUI,
 	useConsentConfig,
@@ -107,6 +111,19 @@ function actionTestId(action: PolicyUiAction) {
 	return 'consent-banner-customize-button';
 }
 
+function setAllCategories(granted: boolean) {
+	const categories = getConsentAvailableCategories(
+		init.value,
+		config.value.consentCategories,
+	);
+	const next = {} as Record<CONSENT_CATEGORY, boolean>;
+	for (const category of categories) {
+		next[category] = category === 'necessary' || granted;
+	}
+	consent.value = next;
+	activeUI.value = null;
+}
+
 function onAction(action: PolicyUiAction) {
 	if (action === 'customize') {
 		activeUI.value = 'manager';
@@ -115,23 +132,12 @@ function onAction(action: PolicyUiAction) {
 	if (!init.value) {
 		return;
 	}
-	const categories = init.value.policy?.consent?.categories ?? ['necessary'];
 	if (action === 'accept') {
-		for (const category of categories) {
-			consent.value.categories[category] = 'grant';
-		}
-		activeUI.value = null;
+		setAllCategories(true);
 		return;
 	}
 	if (action === 'reject') {
-		for (const category of categories) {
-			if (category === 'necessary') {
-				consent.value.categories[category] = 'grant';
-			} else {
-				consent.value.categories[category] = 'deny';
-			}
-		}
-		activeUI.value = null;
+		setAllCategories(false);
 	}
 }
 </script>

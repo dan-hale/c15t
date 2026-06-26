@@ -1,6 +1,44 @@
 import type { ConsentActiveUI } from '@c15t/config';
 import type { InitOutput } from '@c15t/schema/types';
 
+export const CONSENT_CATEGORIES = [
+	'necessary',
+	'functionality',
+	'experience',
+	'measurement',
+	'marketing',
+] as const;
+export type CONSENT_CATEGORY = (typeof CONSENT_CATEGORIES)[number];
+
+export function getConsentAvailableCategories(
+	init: InitOutput | null | undefined,
+	configuredCategories: readonly CONSENT_CATEGORY[] = CONSENT_CATEGORIES
+): Array<CONSENT_CATEGORY> {
+	const knownCategories = new Set<CONSENT_CATEGORY>(CONSENT_CATEGORIES);
+	const baseSource =
+		configuredCategories.length > 0 ? configuredCategories : CONSENT_CATEGORIES;
+	const base = [...new Set(baseSource)].filter(
+		(category): category is CONSENT_CATEGORY =>
+			category !== 'necessary' && knownCategories.has(category)
+	);
+	const policyCategories = init?.policy?.consent?.categories ?? [];
+	const policyOptional = policyCategories.filter(
+		(category): category is CONSENT_CATEGORY =>
+			category !== '*' &&
+			(category as string) !== 'necessary' &&
+			knownCategories.has(category as CONSENT_CATEGORY)
+	);
+
+	let list: CONSENT_CATEGORY[] = [...base];
+	if (!policyCategories.includes('*') && policyOptional.length > 0) {
+		const allowed = new Set(policyOptional);
+		list = list.filter((category) => allowed.has(category));
+	}
+
+	list.unshift('necessary');
+	return list;
+}
+
 /**
  * Persistent, policy-agnostic record of a subject's consent decisions.
  *
@@ -13,19 +51,18 @@ export interface Consent {
 	/**
 	 * Per-policy acknowledgements, keyed by `policyId`.
 	 *
-	 * The `fingerprint` pins the exact policy version the subject acted under and
-	 * `timestamp` anchors expiry. A fingerprint change or an elapsed `expiryDays`
-	 * window are what force a fresh prompt, so this map — not the category
-	 * choices — is the source of truth for "has this policy been satisfied".
+	 * @param fingerprint - The fingerprint of the policy that was used to grant or deny the categories.
+	 * @param timestamp - When the consent was saved under this policy.
 	 */
 	policies: Record<string, { fingerprint: string; timestamp: string }>;
 
 	/**
-	 * Sparse map of explicit decisions. An absent category means "no choice yet"
-	 * and is resolved by the active policy at read time — it is deliberately not
-	 * the same as an explicit `'deny'`, which is sticky across all jurisdictions.
+	 * Categories Granted or Denied by the user explicitly.
+	 * An absent category means "no choice yet"
 	 */
-	categories: Record<string, 'grant' | 'deny'>;
+	categories: {
+		[key in CONSENT_CATEGORY]?: boolean;
+	};
 }
 
 /**
@@ -40,52 +77,81 @@ export interface Consent {
  *
  * @param consent - The subject's stored decisions.
  * @param init - The resolved `/init` payload describing the active policy.
- * @param gpc - When `true`, a Global Privacy Control signal is present *and* the
- *   active policy honors it; tracking categories left unspecified are denied.
- * @returns The granted category keys, scoped to the active policy.
+ * @param gpc - Global Privacy Control signal is present (Sec-GPC=1 OR navigator.globalPrivacyControl === true)
  */
 export function interpretStoredConsent(
 	consent: Consent,
 	init: InitOutput,
 	gpc?: boolean
-): string[] {
-	console.log('interpretStoredConsent', consent, init, gpc);
-	const policy = init.policy;
-	const model = policy?.model ?? 'opt-in';
-
-	const declared = policy?.consent?.categories?.filter(
-		(category) => category !== '*'
-	);
-	const inScope =
-		declared && declared.length > 0
-			? declared
-			: [...new Set(['necessary', ...Object.keys(consent.categories)])];
-
-	const grantedByDefault = model === 'opt-out' || model === 'none';
-	const granted: string[] = [];
-
-	for (const category of inScope) {
+): Array<CONSENT_CATEGORY> {
+	const granted = new Set<CONSENT_CATEGORY>(['necessary']);
+	for (const category of CONSENT_CATEGORIES) {
+		if (category === 'necessary') continue;
 		const choice = consent.categories[category];
-
-		if (choice) {
-			if (choice === 'grant') {
-				granted.push(category);
-			}
+		if (choice === false) continue;
+		if (choice === true) {
+			granted.add(category);
 			continue;
 		}
-
-		if (category === 'necessary') {
-			granted.push(category);
+		// Out of scope → scopeMode: permissive grants, strict blocks.
+		if (
+			init.policy?.consent?.categories?.length &&
+			!init.policy.consent.categories.includes('*') &&
+			!init.policy.consent.categories.includes(category)
+		) {
+			if (init.policy.consent.scopeMode !== 'strict') granted.add(category);
 			continue;
 		}
-
+		// In-scope silence → model default; GPC opts out tracking.
 		const isTracking = category === 'marketing' || category === 'measurement';
-		if (grantedByDefault && !(gpc && isTracking)) {
-			granted.push(category);
+		if (
+			(init.policy?.model === 'opt-out' || init.policy?.model === 'none') &&
+			!(gpc && init.policy?.consent?.gpc === true && isTracking)
+		) {
+			granted.add(category);
 		}
 	}
+	return [...granted];
+}
 
-	return granted;
+const MS_PER_DAY = 86_400_000;
+
+function isPolicyAcknowledgementFresh(
+	timestamp: string,
+	expiryDays?: number
+): boolean {
+	const givenAt = Number.parseInt(timestamp, 10);
+	if (!Number.isFinite(givenAt)) {
+		return false;
+	}
+
+	if (typeof expiryDays !== 'number' || !Number.isFinite(expiryDays)) {
+		return true;
+	}
+
+	const expiresAt = givenAt + Math.max(0, expiryDays) * MS_PER_DAY;
+	return Date.now() < expiresAt;
+}
+
+function isPolicyAcknowledgementValid(
+	consent: Consent,
+	init: InitOutput
+): boolean {
+	const policyId = init.policy?.id;
+	const currentFingerprint = init.policyDecision?.fingerprint;
+	if (!policyId || !currentFingerprint) {
+		return false;
+	}
+
+	const ack = consent.policies[policyId];
+	if (!ack || ack.fingerprint !== currentFingerprint) {
+		return false;
+	}
+
+	return isPolicyAcknowledgementFresh(
+		ack.timestamp,
+		init.policy?.consent?.expiryDays
+	);
 }
 
 /**
@@ -113,7 +179,12 @@ export function deriveActiveConsentUi(
 	if (!init.policy?.ui?.mode || init.policy?.ui?.mode === 'none') return null;
 
 	// If GPC is present and the model is opt-out
-	if (gpc && init.policy?.model === 'opt-out') return 'none';
+	if (gpc && init.policy?.model === 'opt-out') return null;
 
-	return init.policy?.ui?.mode;
+	if (isPolicyAcknowledgementValid(consent, init)) return null;
+
+	const uiMode = init.policy?.ui?.mode;
+	if (uiMode === 'banner') return 'banner';
+	if (uiMode === 'dialog') return 'manager';
+	return null;
 }

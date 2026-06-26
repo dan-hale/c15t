@@ -1,5 +1,3 @@
-@import url("./animations/accordion.css");
-
 :root {
 	--accordion-padding: var(--c15t-space-md);
 	--accordion-stack-gap: 0.75rem;
@@ -34,8 +32,6 @@
 
 	.item:not(:global(.headless)) {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: center;
 		padding: 0;
 		border: 1px solid var(--accordion-border-color);
 		border-radius: var(--accordion-radius);
@@ -44,51 +40,61 @@
 		overflow: visible;
 	}
 
-	.item:not(:global(.headless)):is(:hover, [data-state="open"]) {
-		background-color: var(--accordion-background-hover);
-	}
-
 	:global(.c15t-dark) .item:not(:global(.headless)) {
 		border-color: var(--accordion-border-color-dark);
 		background-color: var(--accordion-background-color-dark);
 	}
 
+	.triggerRow:not(:global(.headless)) {
+		display: grid;
+		grid-column: 1 / -1;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--accordion-gap);
+		box-sizing: border-box;
+		width: 100%;
+		margin: 0;
+		padding: var(--accordion-padding);
+		border: 0;
+		border-radius: var(--accordion-radius);
+		appearance: none;
+		color: var(--accordion-text-color);
+		font: inherit;
+		font-weight: inherit;
+		text-align: left;
+		background-color: transparent;
+		cursor: pointer;
+		transition: background-color var(--accordion-duration) var(--accordion-ease);
+	}
+
+	.triggerRow:not(:global(.headless)):hover,
+	.item[data-state="open"] .triggerRow:not(:global(.headless)) {
+		background-color: var(--accordion-background-hover);
+	}
+
+	:global(.c15t-dark) .triggerRow:not(:global(.headless)) {
+		color: var(--accordion-text-color-dark);
+	}
+
+	:global(.c15t-dark) .triggerRow:not(:global(.headless)):hover,
 	:global(.c15t-dark)
-		.item:not(:global(.headless)):is(:hover, [data-state="open"]) {
+		.item[data-state="open"]
+		.triggerRow:not(:global(.headless)) {
 		background-color: var(--accordion-background-hover-dark);
 	}
 
-	.item:not(:global(.headless)):has(.trigger:focus-visible) {
+	.item:not(:global(.headless)):has(.triggerRow:focus-visible) {
 		outline: 2px solid var(--accordion-focus-ring);
 		outline-offset: -1px;
 	}
 
 	:global(.c15t-dark)
-		.item:not(:global(.headless)):has(.trigger:focus-visible) {
+		.item:not(:global(.headless)):has(.triggerRow:focus-visible) {
 		outline-color: var(--accordion-focus-ring-dark);
 	}
 
-	.itemHeader:not(:global(.headless)) {
-		grid-column: 1;
-		grid-row: 1;
-		margin: 0;
-		padding: var(--accordion-padding);
-		border-radius: var(--accordion-radius);
-		color: var(--accordion-text-color);
-		font: inherit;
-		font-weight: inherit;
-		background-color: transparent;
-		transition: background-color var(--accordion-duration) var(--accordion-ease);
-	}
-
-	:global(.c15t-dark) .itemHeader:not(:global(.headless)) {
-		color: var(--accordion-text-color-dark);
-	}
-
-	.item:not(:global(.headless)) > .control {
-		grid-column: 2;
-		grid-row: 1;
-		padding-inline-end: var(--accordion-padding);
+	.triggerRow:not(:global(.headless)):focus-visible {
+		outline: none;
 	}
 
 	.item:not(:global(.headless)) > .content {
@@ -96,28 +102,15 @@
 	}
 
 	.trigger:not(:global(.headless)) {
-		appearance: none;
 		display: flex;
 		align-items: center;
 		gap: var(--accordion-gap);
-		flex: 1 1 auto;
-		align-self: stretch;
 		min-width: 0;
 		min-height: calc(var(--accordion-icon-size) + 0.25rem);
 		font-size: var(--accordion-title-size);
 		line-height: 1.25rem;
 		letter-spacing: -0.006em;
 		font-weight: var(--c15t-font-weight-medium);
-		padding: 0;
-		border: 0;
-		background: none;
-		text-align: left;
-		color: inherit;
-		cursor: pointer;
-	}
-
-	.trigger:not(:global(.headless)):focus-visible {
-		outline: none;
 	}
 
 	.arrow:not(:global(.headless)) {
@@ -163,28 +156,30 @@
 
 	.control:not(:global(.headless)) {
 		align-self: center;
-		cursor: pointer;
 		flex-shrink: 0;
 		position: relative;
 		top: -1px;
 	}
 
 	.content:not(:global(.headless)) {
+		display: grid;
+		grid-template-rows: 0fr;
 		overflow: hidden;
 		padding: 0;
 		color: var(--accordion-content-color);
 		font-size: 0.875rem;
 		line-height: 1.25rem;
 		letter-spacing: -0.006em;
+		transition: grid-template-rows var(--accordion-duration)
+			var(--accordion-ease);
 	}
 
 	.content:not(:global(.headless))[data-state="open"] {
-		animation: accordionSlideDown var(--accordion-duration) ease-out;
+		grid-template-rows: 1fr;
 	}
 
 	.content:not(:global(.headless))[data-state="closed"] {
 		pointer-events: none;
-		animation: accordionSlideUp var(--accordion-duration) ease-in;
 	}
 
 	.contentViewport:not(:global(.headless)) {
@@ -196,29 +191,17 @@
 			var(--accordion-icon-size) +
 			var(--accordion-gap)
 		);
-	}
-
-	.content[data-state="open"] .contentViewport {
 		padding-bottom: var(--accordion-padding);
-	}
-
-	.content[data-state="closed"] .contentViewport {
-		padding-bottom: 0;
 	}
 
 	.contentInner:not(:global(.headless)) {
 		padding-top: 0.75rem;
 		opacity: 1;
-		transform: translateY(0);
-		transition:
-			opacity calc(var(--accordion-duration) * 0.35) ease-out,
-			transform calc(var(--accordion-duration) * 0.35) ease-out;
-		will-change: opacity, transform;
+		transition: opacity calc(var(--accordion-duration) * 0.35) ease-out;
 	}
 
 	.content[data-state="closed"] .contentInner:not(:global(.headless)) {
 		opacity: 0;
-		transform: translateY(-0.125rem);
 	}
 
 	:global(.c15t-dark) .content:not(:global(.headless)) {
@@ -226,14 +209,10 @@
 	}
 
 	:global([data-disable-animation])
-		.content:not(:global(.headless))[data-state="open"],
-	:global([data-disable-animation])
-		.content:not(:global(.headless))[data-state="closed"],
+		.content:not(:global(.headless)),
 	:global(.disable-animation)
-		.content:not(:global(.headless))[data-state="open"],
-	:global(.disable-animation)
-		.content:not(:global(.headless))[data-state="closed"] {
-		animation: none;
+		.content:not(:global(.headless)) {
+		transition: none;
 	}
 
 	:global([data-disable-animation]) .contentInner:not(:global(.headless)),
@@ -252,7 +231,7 @@
 		}
 
 		.content:not(:global(.headless)) {
-			animation: none;
+			transition: none;
 		}
 
 		.contentInner:not(:global(.headless)) {

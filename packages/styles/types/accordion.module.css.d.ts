@@ -12,5 +12,6 @@ declare const styles: {
 	readonly list: string;
 	readonly title: string;
 	readonly trigger: string;
+	readonly triggerRow: string;
 };
 export = styles;

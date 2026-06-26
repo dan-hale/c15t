@@ -1,9 +1,10 @@
-<script
-	setup
-	lang="ts"
->
+<script setup lang="ts" >
 import type { PolicyUiAction, PolicyUiActionGroup } from '@c15t/schema/types';
 import widgetStyles from '@c15t/styles/consent-widget.module.css';
+import {
+	getConsentAvailableCategories,
+	type CONSENT_CATEGORY,
+} from '@c15t/utils';
 import {
 	useConsent,
 	useConsentActiveUI,
@@ -11,6 +12,10 @@ import {
 	useConsentInit,
 } from '#c15t/composables';
 import ConsentButton from './consent-button.vue';
+
+const emit = defineEmits<{
+	save: [];
+}>();
 
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
@@ -87,9 +92,6 @@ function isPrimary(action: PolicyUiAction) {
 }
 
 function buttonMode(action: PolicyUiAction) {
-	if (action === 'customize') {
-		return 'ghost';
-	}
 	if (action === 'reject') {
 		return 'stroke';
 	}
@@ -117,31 +119,33 @@ function actionTestId(action: PolicyUiAction) {
 	return 'consent-widget-footer-save-button';
 }
 
+function setAllCategories(granted: boolean) {
+	const categories = getConsentAvailableCategories(
+		init.value,
+		config.value.consentCategories,
+	);
+	const next = {} as Record<CONSENT_CATEGORY, boolean>;
+	for (const category of categories) {
+		next[category] = category === 'necessary' || granted;
+	}
+	consent.value = next;
+	activeUI.value = null;
+}
+
 function onAction(action: PolicyUiAction) {
 	if (action === 'customize') {
-		activeUI.value = null;
+		emit('save');
 		return;
 	}
 	if (!init.value) {
 		return;
 	}
-	const categories = init.value.policy?.consent?.categories ?? ['necessary'];
 	if (action === 'accept') {
-		for (const category of categories) {
-			consent.value.categories[category] = 'grant';
-		}
-		activeUI.value = null;
+		setAllCategories(true);
 		return;
 	}
 	if (action === 'reject') {
-		for (const category of categories) {
-			if (category === 'necessary') {
-				consent.value.categories[category] = 'grant';
-			} else {
-				consent.value.categories[category] = 'deny';
-			}
-		}
-		activeUI.value = null;
+		setAllCategories(false);
 	}
 }
 </script>

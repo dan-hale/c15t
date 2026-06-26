@@ -50,10 +50,6 @@ export default defineNuxtModule<ConsentConfig>({
 				name: 'useConsent',
 			},
 			{
-				from: resolver.resolve('./runtime/composables/selection'),
-				name: 'useConsentSelection',
-			},
-			{
 				from: resolver.resolve('./runtime/composables/iabSelection'),
 				name: 'useConsentIabSelection',
 			},

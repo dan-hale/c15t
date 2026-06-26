@@ -114,6 +114,7 @@ interface ConsentConfig {
 | Which links per surface | `config.bannerLegalLinks`, `config.dialogLegalLinks` |
 | Branding / trigger / models | Cookie surfaces: `bannerHideBranding ?? hideBranding`, etc. IAB: `iabBanner*` / `iabDialog*` only |
 | CSS variables | `config.tokens` → applied as `--{key}` on `:root` in `ConsentRoot` |
+| Consent categories | `config.consentCategories` — policy with optional categories narrows this set; `necessary`-only policy does not |
 | Scroll lock | `init.policy.ui.banner.scrollLock` / `init.policy.ui.dialog.scrollLock` |
 | Focus trap | `config.trapFocus` (default `true`) |
 | Animations off | `config.disableAnimation` |
