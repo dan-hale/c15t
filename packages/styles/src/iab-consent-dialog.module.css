@@ -1173,15 +1173,6 @@
 		background-color: var(--iab-cd-surface-hover-dark);
 	}
 
-	.footerButtons {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.footerSpacer {
-		flex: 1;
-	}
-
 	/* Consent storage notice */
 	.consentNotice {
 		text-align: center;

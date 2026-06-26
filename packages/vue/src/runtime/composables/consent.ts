@@ -1,6 +1,16 @@
-import { type Consent, interpretStoredConsent } from '@c15t/utils';
+import {
+	type CONSENT_CATEGORY,
+	type Consent,
+	getConsentAvailableCategories,
+	interpretStoredConsent,
+} from '@c15t/utils';
 import { computed, customRef } from 'vue';
-import { useConsentInit, useCookie } from '#imports';
+import {
+	useConsentActiveUI,
+	useConsentConfig,
+	useConsentInit,
+	useCookie,
+} from '#imports';
 
 const CONSENT_COOKIE = 'c15t:consent';
 
@@ -45,4 +55,33 @@ export function useHasConsent() {
 		if (!stored.value) return [];
 		return interpretStoredConsent(stored.value, init.value);
 	});
+}
+
+export type ConsentSaveInput = Array<CONSENT_CATEGORY> | 'all' | 'none';
+
+export function useConsentSave() {
+	const activeUI = useConsentActiveUI();
+	const config = useConsentConfig();
+	const consent = useConsent();
+	const init = useConsentInit();
+
+	return (categories: ConsentSaveInput) => {
+		const available = getConsentAvailableCategories(
+			init.value,
+			config.value.consentCategories
+		);
+		const selected =
+			categories === 'all'
+				? new Set(available)
+				: categories === 'none'
+					? new Set<CONSENT_CATEGORY>()
+					: new Set(categories);
+
+		const next = {} as Record<CONSENT_CATEGORY, boolean>;
+		for (const category of available) {
+			next[category] = category === 'necessary' || selected.has(category);
+		}
+		consent.value = next;
+		activeUI.value = null;
+	};
 }

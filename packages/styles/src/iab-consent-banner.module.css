@@ -280,30 +280,6 @@
 		}
 	}
 
-	.footerButtonGroup {
-		display: flex;
-		flex-direction: row;
-		gap: 0.5rem;
-	}
-
-	.footerSpacer {
-		flex: 1;
-	}
-
-	.rejectButton,
-	.acceptButton,
-	.customizeButton {
-		flex: 1;
-	}
-
-	@media (min-width: 640px) {
-		.rejectButton,
-		.acceptButton,
-		.customizeButton {
-			flex: none;
-		}
-	}
-
 	.overlay {
 		position: fixed;
 		inset: 0;

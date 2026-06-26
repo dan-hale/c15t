@@ -95,6 +95,8 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		text-wrap: nowrap;
+		white-space: nowrap;
 		gap: 0.5rem;
 		padding: 0.625rem 1rem;
 		border-radius: var(--button-border-radius);

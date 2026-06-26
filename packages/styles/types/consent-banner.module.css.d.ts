@@ -1,6 +1,4 @@
 declare const styles: {
-	readonly acceptButton: string;
-	readonly actionButtonFill: string;
 	readonly bannerEnterActive: string;
 	readonly bannerEnterFrom: string;
 	readonly bannerEnterTo: string;
@@ -9,18 +7,10 @@ declare const styles: {
 	readonly bannerLeaveFrom: string;
 	readonly bannerLeaveTo: string;
 	readonly bannerVisible: string;
-	readonly bottomLeft: string;
-	readonly bottomRight: string;
 	readonly card: string;
 	readonly cardShell: string;
-	readonly customizeButton: string;
 	readonly description: string;
 	readonly footer: string;
-	readonly footerColumn: string;
-	readonly footerFill: string;
-	readonly footerSubGroup: string;
-	readonly footerSubGroupColumn: string;
-	readonly footerSubGroupFill: string;
 	readonly header: string;
 	readonly overlay: string;
 	readonly overlayEnterActive: string;
@@ -31,10 +21,7 @@ declare const styles: {
 	readonly overlayLeaveFrom: string;
 	readonly overlayLeaveTo: string;
 	readonly overlayVisible: string;
-	readonly rejectButton: string;
 	readonly root: string;
 	readonly title: string;
-	readonly topLeft: string;
-	readonly topRight: string;
 };
 export = styles;

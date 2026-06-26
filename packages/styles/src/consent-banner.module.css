@@ -96,7 +96,7 @@
 		transform: translateY(0);
 	}
 
-	/* Legacy class toggles — React consent banner */
+	/* Legacy/compat class toggles */
 	.bannerVisible:not(:global(.headless)) {
 		opacity: 1;
 		transform: translateY(0);
@@ -140,27 +140,6 @@
 	}
 
 	.root[data-position="top-right"]:not(:global(.headless)) {
-		right: 0;
-		top: 0;
-	}
-
-	/* Legacy class toggles — React consent banner */
-	.bottomLeft:not(:global(.headless)) {
-		left: 0;
-		bottom: 0;
-	}
-
-	.bottomRight:not(:global(.headless)) {
-		right: 0;
-		bottom: 0;
-	}
-
-	.topLeft:not(:global(.headless)) {
-		left: 0;
-		top: 0;
-	}
-
-	.topRight:not(:global(.headless)) {
 		right: 0;
 		top: 0;
 	}
@@ -217,34 +196,6 @@
 		outline-offset: 2px;
 	}
 
-	.footer:not(:global(.headless)) button[data-action] {
-		width: 100%;
-	}
-
-	.rejectButton:not(:global(.headless)) {
-		width: 100%;
-	}
-
-	.acceptButton:not(:global(.headless)) {
-		width: 100%;
-	}
-
-	.customizeButton:not(:global(.headless)) {
-		width: 100%;
-	}
-
-	@media (min-width: 640px) {
-		.footer:not(:global(.headless)):not([data-fill]) button[data-action] {
-			width: auto;
-		}
-
-		.rejectButton,
-		.acceptButton,
-		.customizeButton:not(:global(.headless)) {
-			width: auto;
-		}
-	}
-
 	.header:not(:global(.headless)) {
 		display: flex;
 		flex-direction: column;
@@ -290,39 +241,6 @@
 		}
 	}
 
-	.footerSubGroup:not(:global(.headless)) {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.footerSubGroup:not(:global(.headless)) button {
-		flex-grow: 1;
-	}
-
-	.footer:not(:global(.headless))[data-fill],
-	.footerFill:not(:global(.headless)) {
-		flex-direction: column;
-	}
-
-	.footer:not(:global(.headless))[data-direction="column"],
-	.footerColumn:not(:global(.headless)) {
-		flex-direction: column;
-	}
-
-	.footerSubGroup:not(:global(.headless))[data-fill],
-	.footerSubGroup:not(:global(.headless))[data-direction="column"],
-	.footerSubGroupFill:not(:global(.headless)),
-	.footerSubGroupColumn:not(:global(.headless)) {
-		width: 100%;
-	}
-
-	.footer:not(:global(.headless))[data-fill] button,
-	.actionButtonFill:not(:global(.headless)) {
-		width: 100%;
-	}
-
 	.description:not(:global(.headless)) {
 		font-size: 0.875rem;
 		line-height: 1.25rem;
@@ -361,12 +279,12 @@
 	}
 
 	.description[data-context="manager"]:not(:global(.headless)) {
-		color: var(--consent-widget-text-muted-color);
+		color: var(--consent-manager-text-muted-color);
 	}
 
 	:global(.c15t-dark)
 		.description[data-context="manager"]:not(:global(.headless)) {
-		color: var(--consent-widget-text-muted-color-dark);
+		color: var(--consent-manager-text-muted-color-dark);
 	}
 
 	.title:not(:global(.headless)) {
@@ -405,7 +323,7 @@
 		opacity: 1;
 	}
 
-	/* Legacy class toggles — React consent banner */
+	/* Legacy/compat class toggles */
 	.overlayVisible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-banner-animation-duration)

@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { computed, toValue } from 'vue';
-import { Teleport, Transition } from 'vue';
+import { computed, Teleport, Transition, toValue } from 'vue';
 import { FocusScope } from 'reka-ui';
 import type { GlobalVendorList, NonIABVendor } from '@c15t/schema/types';
+import type { PolicyUiAction } from '@c15t/schema/types';
 import bannerStyles from '@c15t/styles/iab-consent-banner.module.css';
 import {
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
+	useConsentIabSave,
 	useConsentIabSelection,
-	type ConsentIabSelection,
 } from '#c15t/composables';
-import ConsentButton from './consent-button.vue';
+import ConsentActions from './consent-actions.vue';
 import ConsentTag from './consent-tag.vue';
 import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 
 const MAX_DISPLAY_ITEMS = 5;
 const STANDALONE_PURPOSE_ID = 1;
+const IAB_BANNER_LAYOUT: (PolicyUiAction | PolicyUiAction[])[] = [
+	['reject', 'accept'],
+	'customize',
+];
 
 const props = withDefaults(
 	defineProps<{
@@ -31,6 +35,7 @@ const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 const init = useConsentInit();
 const iabSelection = useConsentIabSelection();
+const save = useConsentIabSave();
 
 const initValue = computed(() => toValue(init));
 const gvl = computed(() => initValue.value?.gvl ?? null);
@@ -74,6 +79,12 @@ const iabT = computed(() => {
 		};
 	} | undefined;
 });
+
+const labels = computed(() => ({
+	accept: iabT.value?.common?.acceptAll ?? 'Accept all',
+	reject: iabT.value?.common?.rejectAll ?? 'Reject all',
+	customize: iabT.value?.common?.customize ?? 'Customize',
+}));
 
 function resolveBannerSummary(gvlData: GlobalVendorList, vendors: NonIABVendor[]) {
 	const vendorCount =
@@ -179,102 +190,6 @@ const bannerSummary = computed(() => {
 	return resolveBannerSummary(gvl.value, customVendors.value);
 });
 
-function buildAcceptAllIab(
-	gvlData: GlobalVendorList,
-	vendors: NonIABVendor[],
-): ConsentIabSelection {
-	const purposeConsents: Record<number, boolean> = {};
-	const purposeLegitimateInterests: Record<number, boolean> = {};
-	for (const purposeId of Object.keys(gvlData.purposes)) {
-		purposeConsents[Number(purposeId)] = true;
-		purposeLegitimateInterests[Number(purposeId)] = true;
-	}
-
-	const vendorConsents: Record<string, boolean> = {};
-	const vendorLegitimateInterests: Record<string, boolean> = {};
-	for (const [vendorId, vendor] of Object.entries(gvlData.vendors)) {
-		const id = String(vendorId);
-		if (vendor.purposes && vendor.purposes.length > 0) {
-			vendorConsents[id] = true;
-		}
-		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
-			vendorLegitimateInterests[id] = true;
-		}
-	}
-	for (const vendor of vendors) {
-		const id = String(vendor.id);
-		if (vendor.purposes && vendor.purposes.length > 0) {
-			vendorConsents[id] = true;
-		}
-		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
-			vendorLegitimateInterests[id] = true;
-		}
-	}
-
-	const specialFeatureOptIns: Record<number, boolean> = {};
-	for (const featureId of Object.keys(gvlData.specialFeatures ?? {})) {
-		specialFeatureOptIns[Number(featureId)] = true;
-	}
-
-	return {
-		purposeConsents,
-		purposeLegitimateInterests,
-		vendorConsents,
-		vendorLegitimateInterests,
-		specialFeatureOptIns,
-		preferenceCenterTab: iabSelection.value.preferenceCenterTab,
-	};
-}
-
-function buildRejectAllIab(
-	gvlData: GlobalVendorList,
-	vendors: NonIABVendor[],
-): ConsentIabSelection {
-	const purposeConsents: Record<number, boolean> = { 1: true };
-	const purposeLegitimateInterests: Record<number, boolean> = {};
-	for (const purposeId of Object.keys(gvlData.purposes)) {
-		if (Number(purposeId) !== 1) {
-			purposeConsents[Number(purposeId)] = false;
-			purposeLegitimateInterests[Number(purposeId)] = false;
-		}
-	}
-
-	const vendorConsents: Record<string, boolean> = {};
-	const vendorLegitimateInterests: Record<string, boolean> = {};
-	for (const [vendorId, vendor] of Object.entries(gvlData.vendors)) {
-		const id = String(vendorId);
-		if (vendor.purposes && vendor.purposes.length > 0) {
-			vendorConsents[id] = false;
-		}
-		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
-			vendorLegitimateInterests[id] = false;
-		}
-	}
-	for (const vendor of vendors) {
-		const id = String(vendor.id);
-		if (vendor.purposes && vendor.purposes.length > 0) {
-			vendorConsents[id] = false;
-		}
-		if (vendor.legIntPurposes && vendor.legIntPurposes.length > 0) {
-			vendorLegitimateInterests[id] = false;
-		}
-	}
-
-	const specialFeatureOptIns: Record<number, boolean> = {};
-	for (const featureId of Object.keys(gvlData.specialFeatures ?? {})) {
-		specialFeatureOptIns[Number(featureId)] = false;
-	}
-
-	return {
-		purposeConsents,
-		purposeLegitimateInterests,
-		vendorConsents,
-		vendorLegitimateInterests,
-		specialFeatureOptIns,
-		preferenceCenterTab: iabSelection.value.preferenceCenterTab,
-	};
-}
-
 const descriptionText = computed(() =>
 	(iabT.value?.banner?.description ?? '').replace(
 		'{partnerCount}',
@@ -300,33 +215,19 @@ const descriptionParts = computed(() => {
 	return { before: before ?? text, after: after ?? '' };
 });
 
-function isPrimary(button: 'reject' | 'accept' | 'customize') {
-	return button === props.primaryButton;
-}
-
-function rejectAll() {
-	const gvlData = gvl.value;
-	if (!gvlData) {
+function onAction(action: PolicyUiAction) {
+	if (action === 'customize') {
+		iabSelection.value.preferenceCenterTab = 'purposes';
+		activeUI.value = 'manager';
 		return;
 	}
-
-	iabSelection.value = buildRejectAllIab(gvlData, customVendors.value);
-	activeUI.value = null;
-}
-
-function acceptAll() {
-	const gvlData = gvl.value;
-	if (!gvlData) {
+	if (action === 'accept') {
+		save('all');
 		return;
 	}
-
-	iabSelection.value = buildAcceptAllIab(gvlData, customVendors.value);
-	activeUI.value = null;
-}
-
-function openDialog() {
-	iabSelection.value.preferenceCenterTab = 'purposes';
-	activeUI.value = 'manager';
+	if (action === 'reject') {
+		save('none');
+	}
 }
 
 function openVendors() {
@@ -441,36 +342,13 @@ const shouldTrapFocus = computed(
 						data-testid="iab-consent-banner-footer"
 						:class="bannerStyles.footer"
 					>
-						<div :class="bannerStyles.footerButtonGroup">
-							<ConsentButton
-								:variant="isPrimary('reject') ? 'primary' : 'neutral'"
-								mode="stroke"
-								:class="bannerStyles.rejectButton"
-								data-testid="iab-consent-banner-reject-button"
-								@click="rejectAll"
-							>
-								{{ iabT?.common?.rejectAll }}
-							</ConsentButton>
-							<ConsentButton
-								:variant="isPrimary('accept') ? 'primary' : 'neutral'"
-								:mode="isPrimary('accept') ? 'filled' : 'stroke'"
-								:class="bannerStyles.acceptButton"
-								data-testid="iab-consent-banner-accept-button"
-								@click="acceptAll"
-							>
-								{{ iabT?.common?.acceptAll }}
-							</ConsentButton>
-						</div>
-						<div :class="bannerStyles.footerSpacer" />
-						<ConsentButton
-							:variant="isPrimary('customize') ? 'primary' : 'neutral'"
-							:mode="isPrimary('customize') ? 'filled' : 'stroke'"
-							:class="bannerStyles.customizeButton"
-							data-testid="iab-consent-banner-customize-button"
-							@click="openDialog"
-						>
-							{{ iabT?.common?.customize }}
-						</ConsentButton>
+						<ConsentActions
+							:layout="IAB_BANNER_LAYOUT"
+							:primary-actions="[primaryButton]"
+							:labels="labels"
+							secondary-mode="stroke"
+							@action="onAction"
+						/>
 					</div>
 					</div>
 				</FocusScope>

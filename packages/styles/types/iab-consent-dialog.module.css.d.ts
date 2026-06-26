@@ -22,8 +22,6 @@ declare const styles: {
 	readonly examplesList: string;
 	readonly examplesToggle: string;
 	readonly footer: string;
-	readonly footerButtons: string;
-	readonly footerSpacer: string;
 	readonly header: string;
 	readonly headerContent: string;
 	readonly iabVendorNotice: string;

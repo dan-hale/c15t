@@ -4,7 +4,8 @@
 >
 import accordionStyles from '@c15t/styles/accordion.module.css';
 import dialogStyles from '@c15t/styles/consent-dialog.module.css';
-import widgetStyles from '@c15t/styles/consent-widget.module.css';
+import managerStyles from '@c15t/styles/consent-manager.module.css';
+import type { PolicyUiAction } from '@c15t/schema/types';
 import {
 	AccordionContent,
 	AccordionHeader,
@@ -19,23 +20,34 @@ import {
 import { getConsentAvailableCategories, type CONSENT_CATEGORY } from '@c15t/utils';
 import { computed, type HTMLAttributes, ref, watch } from 'vue';
 import {
-	useConsent,
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
 	useHasConsent,
+	useConsentSave,
 } from '../composables';
 import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 import ConsentDescription from './consent-description.vue';
+import ConsentActions from './consent-actions.vue';
 import ConsentSwitch from './consent-switch.vue';
 import ConsentTag from './consent-tag.vue';
-import ConsentWidgetFooter from './consent-widget-footer.vue';
 
 const init = useConsentInit();
-const consent = useConsent();
 const granted = useHasConsent();
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
+const save = useConsentSave();
+const DEFAULT_ACTIONS: PolicyUiAction[] = ['reject', 'accept', 'customize'];
+const surface = computed(() => init.value?.policy?.ui?.dialog);
+const managerComponents = computed(
+	() =>
+		config.value.components?.manager as
+			| {
+					actions?: Record<string, unknown>;
+					actionGroup?: Record<string, unknown>;
+			  }
+			| undefined
+);
 
 const draft = ref<Record<CONSENT_CATEGORY, boolean>>({} as Record<CONSENT_CATEGORY, boolean>);
 
@@ -73,9 +85,34 @@ watch(activeUI, (ui) => {
 	if (ui === 'manager') reset();
 }, { immediate: true });
 
+const labels = computed(() => {
+	const common = init.value?.translations?.translations?.common;
+	return {
+		accept: common?.acceptAll ?? 'Accept all',
+		reject: common?.rejectAll ?? 'Reject all',
+		customize: common?.save ?? 'Save',
+	} as const;
+});
+
 function savePreferences() {
-	Object.assign(consent.value, draft.value);
-	activeUI.value = null;
+	const selected = Object.entries(draft.value)
+		.filter(([, enabled]) => enabled)
+		.map(([category]) => category as CONSENT_CATEGORY);
+	save(selected);
+}
+
+function onAction(action: PolicyUiAction) {
+	if (action === 'customize') {
+		savePreferences();
+		return;
+	}
+	if (action === 'accept') {
+		save('all');
+		return;
+	}
+	if (action === 'reject') {
+		save('none');
+	}
 }
 </script>
 
@@ -125,8 +162,8 @@ function savePreferences() {
 						>
 							<div
 								v-bind="config.components?.manager?.root"
-								data-testid="consent-widget-root"
-								:class="widgetStyles.widget"
+								data-testid="consent-manager-root"
+								:class="managerStyles.manager"
 								:data-disable-animation="
 									config?.disableAnimation ? true : undefined
 								"
@@ -141,7 +178,7 @@ function savePreferences() {
 									type="single"
 									collapsible
 									:unmount-on-hide="false"
-									data-testid="consent-widget-accordion"
+									data-testid="consent-manager-accordion"
 									:class="accordionStyles.list"
 								>
 									<AccordionItem
@@ -149,7 +186,7 @@ function savePreferences() {
 										:key="category"
 										:value="category"
 										v-bind="config.components?.['accordion-item']?.root"
-										:data-testid="`consent-widget-accordion-item-${category}`"
+										:data-testid="`consent-manager-accordion-item-${category}`"
 										:unmount-on-hide="false"
 										:class="accordionStyles.item"
 									>
@@ -157,13 +194,13 @@ function savePreferences() {
 											<AccordionTrigger
 												as-child
 												v-bind="config.components?.['accordion-item']?.trigger"
-												:data-testid="`consent-widget-accordion-trigger-${category}`"
+												:data-testid="`consent-manager-accordion-trigger-${category}`"
 											>
 												<div :class="accordionStyles.triggerRow">
 													<div :class="accordionStyles.trigger">
 														<span
 															:class="accordionStyles.arrow"
-															:data-testid="`consent-widget-accordion-arrow-${category}`"
+															:data-testid="`consent-manager-accordion-arrow-${category}`"
 															aria-hidden="true"
 														>
 															<svg
@@ -194,7 +231,7 @@ function savePreferences() {
 															v-model="draft[category]"
 															:disabled="category === 'necessary'"
 															:aria-label="consentTitle(category)"
-															:data-testid="`consent-widget-switch-${category}`"
+															:data-testid="`consent-manager-switch-${category}`"
 														/>
 													</div>
 												</div>
@@ -202,7 +239,7 @@ function savePreferences() {
 										</AccordionHeader>
 										<AccordionContent
 											v-bind="config.components?.['accordion-item']?.content"
-											:data-testid="`consent-widget-accordion-content-${category}`"
+											:data-testid="`consent-manager-accordion-content-${category}`"
 											:class="accordionStyles.content"
 										>
 											<div :class="accordionStyles.contentViewport">
@@ -221,7 +258,23 @@ function savePreferences() {
 										</AccordionContent>
 									</AccordionItem>
 								</AccordionRoot>
-								<ConsentWidgetFooter @save="savePreferences" />
+								<div
+									v-bind="config.components?.manager?.footer"
+									data-testid="consent-manager-footer"
+									:class="managerStyles.footer"
+								>
+									<ConsentActions
+										:layout="surface?.layout"
+										:actions="surface?.allowedActions ?? DEFAULT_ACTIONS"
+										:direction="surface?.direction"
+										:ui-profile="surface?.uiProfile"
+										:primary-actions="surface?.primaryActions"
+										:labels="labels"
+										:root-attrs="managerComponents?.actions"
+										:group-attrs="managerComponents?.actionGroup"
+										@action="onAction"
+									/>
+								</div>
 							</div>
 						</div>
 						<ConsentTag

@@ -1,21 +1,28 @@
 <script setup lang="ts">
 import { computed, Teleport, Transition } from 'vue';
 import { DEFAULT_BANNER_POSITION } from '@c15t/config';
+import type { PolicyUiAction } from '@c15t/schema/types';
 import bannerStyles from '@c15t/styles/consent-banner.module.css';
 import {
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
-} from '#c15t/composables';
+	useConsentSave,
+} from '../composables';
 import { FocusScope } from 'reka-ui';
+import ConsentActions from './consent-actions.vue';
 import ConsentDescription from './consent-description.vue';
-import ConsentBannerFooter from './consent-banner-footer.vue';
 import ConsentTag from './consent-tag.vue';
 import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
 const init = useConsentInit();
+const save = useConsentSave();
+const DEFAULT_ACTIONS: PolicyUiAction[] = ['reject', 'accept', 'customize'];
+const transitionStyles = bannerStyles as Record<string, string>;
+
+const surface = computed(() => init.value?.policy?.ui?.banner);
 
 const isOpen = computed(() => {
 	const model = init.value?.policy?.model;
@@ -43,18 +50,41 @@ const bannerTitle = computed(
 const bannerPosition = computed(
 	() => config.value.bannerPosition ?? DEFAULT_BANNER_POSITION,
 );
+
+const labels = computed(() => {
+	const common = init.value?.translations?.translations?.common;
+	return {
+		accept: common?.acceptAll ?? 'Accept all',
+		reject: common?.rejectAll ?? 'Reject all',
+		customize: common?.customize ?? 'Customize',
+	} as const;
+});
+
+function onAction(action: PolicyUiAction) {
+	if (action === 'customize') {
+		activeUI.value = 'manager';
+		return;
+	}
+	if (action === 'accept') {
+		save('all');
+		return;
+	}
+	if (action === 'reject') {
+		save('none');
+	}
+}
 </script>
 
 <template>
 	<Teleport to="body">
 		<Transition
 			:disabled="disableAnimation"
-			:enter-active-class="bannerStyles.overlayEnterActive"
-			:leave-active-class="bannerStyles.overlayLeaveActive"
-			:enter-from-class="bannerStyles.overlayEnterFrom"
-			:enter-to-class="bannerStyles.overlayEnterTo"
-			:leave-from-class="bannerStyles.overlayLeaveFrom"
-			:leave-to-class="bannerStyles.overlayLeaveTo"
+			:enter-from-class="transitionStyles.overlayHidden"
+			:enter-active-class="transitionStyles.overlayVisible"
+			:enter-to-class="transitionStyles.overlayVisible"
+			:leave-from-class="transitionStyles.overlayVisible"
+			:leave-active-class="transitionStyles.overlayHidden"
+			:leave-to-class="transitionStyles.overlayHidden"
 		>
 			<div
 				v-if="isOpen && scrollLock"
@@ -65,12 +95,12 @@ const bannerPosition = computed(
 		</Transition>
 		<Transition
 			:disabled="disableAnimation"
-			:enter-active-class="bannerStyles.bannerEnterActive"
-			:leave-active-class="bannerStyles.bannerLeaveActive"
-			:enter-from-class="bannerStyles.bannerEnterFrom"
-			:enter-to-class="bannerStyles.bannerEnterTo"
-			:leave-from-class="bannerStyles.bannerLeaveFrom"
-			:leave-to-class="bannerStyles.bannerLeaveTo"
+			:enter-from-class="transitionStyles.bannerHidden"
+			:enter-active-class="transitionStyles.bannerVisible"
+			:enter-to-class="transitionStyles.bannerVisible"
+			:leave-from-class="transitionStyles.bannerVisible"
+			:leave-active-class="transitionStyles.bannerHidden"
+			:leave-to-class="transitionStyles.bannerHidden"
 		>
 			<div
 				v-if="isOpen"
@@ -107,7 +137,25 @@ const bannerPosition = computed(
 								</div>
 								<ConsentDescription context="banner" />
 							</div>
-							<ConsentBannerFooter />
+							<div
+								v-bind="config.components?.banner?.footer"
+								data-testid="consent-banner-footer"
+								:class="bannerStyles.footer"
+							>
+								<ConsentActions
+									:layout="surface?.layout"
+									:actions="surface?.allowedActions ?? DEFAULT_ACTIONS"
+									:direction="surface?.direction"
+									:ui-profile="surface?.uiProfile"
+									:primary-actions="surface?.primaryActions"
+									:labels="labels"
+									:root-attrs="config.components?.banner?.actions as
+										object | undefined"
+									:group-attrs="config.components?.banner?.actionGroup as
+										object | undefined"
+									@action="onAction"
+								/>
+							</div>
 						</div>
 					</FocusScope>
 				</div>

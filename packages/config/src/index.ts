@@ -168,7 +168,8 @@ export interface ConsentConfig<T = Record<string, unknown>> {
 			title?: T;
 			description?: T;
 			footer?: T;
-			footerSubGroup?: T;
+			actions?: T;
+			actionGroup?: T;
 			tag?: T;
 			overlay?: T;
 		};
@@ -187,6 +188,8 @@ export interface ConsentConfig<T = Record<string, unknown>> {
 			root?: T;
 			accordion?: T;
 			footer?: T;
+			actions?: T;
+			actionGroup?: T;
 			tag?: T;
 		};
 		button: {
@@ -231,7 +234,6 @@ export interface ConsentConfig<T = Record<string, unknown>> {
 			title?: T;
 			description?: T;
 			footer?: T;
-			footerSubGroup?: T;
 			tag?: T;
 			overlay?: T;
 		};

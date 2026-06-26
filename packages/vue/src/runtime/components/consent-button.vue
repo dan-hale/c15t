@@ -2,7 +2,7 @@
 import { mergeProps } from 'vue';
 import buttonStyles from '@c15t/styles/button.module.css';
 import type { ButtonMode, ButtonVariant } from '@c15t/config';
-import { useConsentConfig, useConsentInit } from '#c15t/composables';
+import { useConsentConfig } from '#imports';
 
 withDefaults(
 	defineProps<{
@@ -17,7 +17,6 @@ withDefaults(
 	},
 );
 
-const init = useConsentInit();
 const config = useConsentConfig();
 </script>
 
