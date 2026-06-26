@@ -241,7 +241,8 @@
 		outline-color: var(--switch-focus-ring-dark);
 	}
 
-	.root-small:not(:global(.headless)) {
+	.root:not(:global(.headless))[data-size="small"],
+	.rootSmall:not(:global(.headless)) {
 		--switch-height: 1rem;
 		--switch-width: 1.75rem;
 		--switch-padding: 0.125rem;
@@ -255,12 +256,14 @@
 		);
 	}
 
-	.track-small:not(:global(.headless)) {
+	.root:not(:global(.headless))[data-size="small"] .track,
+	.trackSmall:not(:global(.headless)) {
 		width: 100%;
 		height: 100%;
 	}
 
-	.thumb-small:not(:global(.headless)) {
+	.root:not(:global(.headless))[data-size="small"] .thumb,
+	.thumbSmall:not(:global(.headless)) {
 		width: var(--switch-thumb-size);
 		height: var(--switch-thumb-size);
 	}

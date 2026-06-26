@@ -1,23 +1,26 @@
-<script setup lang="ts">
-import { computed, Teleport } from 'vue';
+<script
+	setup
+	lang="ts"
+>
+import { DEFAULT_MANAGER_MODE } from '@c15t/config';
+import dialogStyles from '@c15t/styles/consent-dialog.module.css';
 import {
 	DialogContent,
 	DialogOverlay,
 	DialogPortal,
 	DialogRoot,
 } from 'reka-ui';
-import { DEFAULT_MANAGER_MODE } from '@c15t/config';
-import dialogStyles from '@c15t/styles/consent-dialog.module.css';
+import { computed, Teleport } from 'vue';
 import {
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
 } from '#c15t/composables';
+import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 import ConsentDescription from './consent-description.vue';
 import ConsentDialogTrigger from './consent-dialog-trigger.vue';
 import ConsentManager from './consent-manager.vue';
 import ConsentTag from './consent-tag.vue';
-import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 
 const activeUI = useConsentActiveUI();
 const config = useConsentConfig();
@@ -28,7 +31,7 @@ const isOpen = computed(() => {
 	// const models = config.value.dialogModels ?? config.value.models;
 	// const isVisible =
 	// 	!models?.length || (model !== undefined && models.includes(model));
-	return activeUI.value === 'manager' ;
+	return activeUI.value === 'manager';
 });
 
 const disableAnimation = computed(() => Boolean(config.value.disableAnimation));
@@ -40,11 +43,11 @@ function onOpenChange(open: boolean) {
 }
 
 const scrollLock = computed(
-	() => init.value?.policy?.ui?.dialog?.scrollLock ?? true,
+	() => init.value?.policy?.ui?.dialog?.scrollLock ?? true
 );
 
-const shouldTrapFocus = computed(
-	() => Boolean(isOpen.value && config.value.trapFocus),
+const shouldTrapFocus = computed(() =>
+	Boolean(isOpen.value && config.value.trapFocus)
 );
 
 useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
@@ -61,19 +64,15 @@ useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
 				v-if="scrollLock"
 				v-bind="config.components?.dialog?.overlay"
 				data-testid="consent-dialog-overlay"
-				:class="[
-					dialogStyles.overlay,
-					{ 'disable-animation': disableAnimation },
-				]"
+				:class="dialogStyles.overlay"
+				:data-disable-animation="disableAnimation ? true : undefined"
 			/>
 			<DialogContent
 				v-bind="config.components?.dialog?.root"
 				data-testid="consent-dialog-root"
 				data-mode="dialog"
-				:class="[
-					dialogStyles.root,
-					{ 'disable-animation': disableAnimation },
-				]"
+				:class="dialogStyles.root"
+				:data-disable-animation="disableAnimation ? true : undefined"
 			>
 				<div :class="dialogStyles.container">
 					<div
@@ -90,9 +89,7 @@ useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
 								data-testid="consent-dialog-title"
 								:class="dialogStyles.title"
 							>
-								{{
-									init?.translations?.translations?.consentManagerDialog?.title
-								}}
+								{{ init?.translations?.translations?.consentManagerDialog?.title }}
 							</div>
 							<ConsentDescription context="dialog" />
 						</div>
@@ -105,9 +102,9 @@ useConsentScrollLock(computed(() => isOpen.value && scrollLock.value));
 						<div
 							v-bind="config.components?.dialog?.footer"
 							:class="dialogStyles.footer"
+							v-if="!(config.dialogHideBranding ?? config.hideBranding)"
 						>
 							<ConsentTag
-								v-if="!(config.dialogHideBranding ?? config.hideBranding)"
 								context="dialog"
 							/>
 						</div>

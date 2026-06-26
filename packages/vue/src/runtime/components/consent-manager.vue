@@ -1,5 +1,9 @@
-<script setup lang="ts">
-import { reactive, type HTMLAttributes } from 'vue';
+<script
+	setup
+	lang="ts"
+>
+import accordionStyles from '@c15t/styles/accordion.module.css';
+import widgetStyles from '@c15t/styles/consent-widget.module.css';
 import {
 	AccordionContent,
 	AccordionHeader,
@@ -7,16 +11,15 @@ import {
 	AccordionRoot,
 	AccordionTrigger,
 } from 'reka-ui';
-import accordionStyles from '@c15t/styles/accordion.module.css';
-import widgetStyles from '@c15t/styles/consent-widget.module.css';
+import { type HTMLAttributes, reactive } from 'vue';
 import {
 	useConsent,
 	useConsentActiveUI,
 	useConsentConfig,
 	useConsentInit,
 } from '../composables';
-import ConsentPolicyFooter from './consent-policy-footer.vue';
 import ConsentSwitch from './consent-switch.vue';
+import ConsentWidgetFooter from './consent-widget-footer.vue';
 
 const init = useConsentInit();
 const consent = useConsent();
@@ -26,8 +29,9 @@ const config = useConsentConfig();
 const draft = reactive<string[]>([]);
 
 function consentTitle(category: string) {
-	const types = init.value?.translations?.translations
-		?.consentTypes as Record<string, { title?: string }> | undefined;
+	const types = init.value?.translations?.translations?.consentTypes as
+		| Record<string, { title?: string }>
+		| undefined;
 	const title = types?.[category]?.title;
 	if (title) return title;
 
@@ -67,10 +71,8 @@ function savePreferences(preference: 'all' | 'necessary' | string[]) {
 	<div
 		v-bind="config.components?.manager?.root"
 		data-testid="consent-widget-root"
-		:class="[
-			widgetStyles.widget,
-			{ 'disable-animation': config?.disableAnimation },
-		]"
+		:class="widgetStyles.widget"
+		:data-disable-animation="config?.disableAnimation ? true : undefined"
 	>
 		<AccordionRoot
 			v-bind="config.components?.accordion?.root as Omit<HTMLAttributes, 'dir'>"
@@ -148,6 +150,6 @@ function savePreferences(preference: 'all' | 'necessary' | string[]) {
 			</AccordionItem>
 		</AccordionRoot>
 
-		<ConsentPolicyFooter surface="dialog" @save="savePreferences" />
+		<ConsentWidgetFooter @save="savePreferences" />
 	</div>
 </template>

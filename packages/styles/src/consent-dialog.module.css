@@ -1,4 +1,4 @@
-@import url('./animations/enter-exit.css');
+@import url("./animations/enter-exit.css");
 
 :root {
 	/* Typography */
@@ -169,8 +169,10 @@
 		justify-content: flex-end;
 	}
 
-	.root:not(:global(.headless))[data-mode="sidebar-left"] .container:not(:global(.headless)),
-	.root:not(:global(.headless))[data-mode="sidebar-right"] .container:not(:global(.headless)) {
+	.root:not(:global(.headless))[data-mode="sidebar-left"]
+		.container:not(:global(.headless)),
+	.root:not(:global(.headless))[data-mode="sidebar-right"]
+		.container:not(:global(.headless)) {
 		position: relative;
 		z-index: var(--consent-dialog-z-index);
 		width: min(100%, var(--consent-dialog-max-width));
@@ -178,8 +180,10 @@
 		height: 100%;
 	}
 
-	.root:not(:global(.headless))[data-mode="sidebar-left"] .card:not(:global(.headless)),
-	.root:not(:global(.headless))[data-mode="sidebar-right"] .card:not(:global(.headless)) {
+	.root:not(:global(.headless))[data-mode="sidebar-left"]
+		.card:not(:global(.headless)),
+	.root:not(:global(.headless))[data-mode="sidebar-right"]
+		.card:not(:global(.headless)) {
 		width: 100%;
 		height: 100%;
 		max-height: 100%;
@@ -227,40 +231,46 @@
 		}
 	}
 
-	.root[data-mode="sidebar-left"][data-state="open"] .container:not(:global(.headless)) {
-		animation: consent-dialog-slide-in-left var(--consent-dialog-animation-duration)
+	.root[data-mode="sidebar-left"][data-state="open"]
+		.container:not(:global(.headless)) {
+		animation: consent-dialog-slide-in-left
+			var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
-	.root[data-mode="sidebar-left"][data-state="closed"] .container:not(:global(.headless)) {
-		animation: consent-dialog-slide-out-left var(--consent-dialog-animation-duration)
-			ease-in;
+	.root[data-mode="sidebar-left"][data-state="closed"]
+		.container:not(:global(.headless)) {
+		animation: consent-dialog-slide-out-left
+			var(--consent-dialog-animation-duration) ease-in;
 	}
 
-	.root[data-mode="sidebar-right"][data-state="open"] .container:not(:global(.headless)) {
-		animation: consent-dialog-slide-in-right var(--consent-dialog-animation-duration)
+	.root[data-mode="sidebar-right"][data-state="open"]
+		.container:not(:global(.headless)) {
+		animation: consent-dialog-slide-in-right
+			var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
-	.root[data-mode="sidebar-right"][data-state="closed"] .container:not(:global(.headless)) {
-		animation: consent-dialog-slide-out-right var(--consent-dialog-animation-duration)
-			ease-in;
+	.root[data-mode="sidebar-right"][data-state="closed"]
+		.container:not(:global(.headless)) {
+		animation: consent-dialog-slide-out-right
+			var(--consent-dialog-animation-duration) ease-in;
 	}
 
 	/* Legacy class toggles — used by React and banner-style transitions */
-	.dialog-visible:not(:global(.headless)) {
+	.dialogVisible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
-	.dialog-hidden:not(:global(.headless)) {
+	.dialogHidden:not(:global(.headless)) {
 		opacity: 0;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
-	.content-visible:not(:global(.headless)) {
+	.contentVisible:not(:global(.headless)) {
 		opacity: 1;
 		transform: scale(1);
 		transition:
@@ -270,7 +280,7 @@
 			cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
-	.content-hidden:not(:global(.headless)) {
+	.contentHidden:not(:global(.headless)) {
 		opacity: 0;
 		transform: scale(0.95);
 		transition:
@@ -310,7 +320,7 @@
 		padding: 0 0.5rem;
 	}
 
-	.branding-copy:not(:global(.headless)) {
+	.brandingCopy:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: baseline;
 		gap: 0.25rem;
@@ -318,15 +328,15 @@
 		white-space: nowrap;
 	}
 
-	.branding-text:not(:global(.headless)) {
+	.brandingText:not(:global(.headless)) {
 		font-weight: var(--c15t-font-weight-medium);
 	}
 
-	.branding-by:not(:global(.headless)) {
+	.brandingBy:not(:global(.headless)) {
 		font-weight: var(--c15t-font-weight-normal);
 	}
 
-	.branding-wordmark-label:not(:global(.headless)) {
+	.brandingWordmarkLabel:not(:global(.headless)) {
 		white-space: nowrap;
 		letter-spacing: -0.03em;
 	}
@@ -344,7 +354,7 @@
 		color: var(--consent-dialog-foreground-color-dark);
 	}
 
-	.branding-c15-t:not(:global(.headless)) {
+	.brandingC15T:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -353,7 +363,7 @@
 		height: auto;
 	}
 
-	.branding-wordmark:not(:global(.headless)) {
+	.brandingWordmark:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
@@ -363,7 +373,7 @@
 		white-space: nowrap;
 	}
 
-	.branding-c15-t-mark:not(:global(.headless)) {
+	.brandingC15TMark:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -372,7 +382,7 @@
 		height: var(--consent-dialog-branding-icon-height);
 	}
 
-	.branding-c15-t-mark:not(:global(.headless)) > svg {
+	.brandingC15TMark:not(:global(.headless)) > svg {
 		display: block;
 		flex: none;
 		aspect-ratio: 446 / 445;
@@ -381,7 +391,7 @@
 		max-width: 100%;
 	}
 
-	.branding-inth:not(:global(.headless)) {
+	.brandingInth:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		flex: none;
@@ -390,7 +400,7 @@
 		height: var(--consent-dialog-branding-icon-height);
 	}
 
-	.branding-inth:not(:global(.headless)) > svg {
+	.brandingInth:not(:global(.headless)) > svg {
 		display: block;
 		flex: none;
 		aspect-ratio: 88 / 90;
@@ -399,7 +409,7 @@
 		max-width: 100%;
 	}
 
-	.branding-tag:not(:global(.headless)) {
+	.brandingTag:not(:global(.headless)) {
 		position: absolute;
 		display: inline-flex;
 		align-items: center;
@@ -417,38 +427,39 @@
 		z-index: 2;
 	}
 
-	.branding-tag:not(:global(.headless)) .branding-copy {
+	.brandingTag:not(:global(.headless)) .brandingCopy {
 		font-size: var(--consent-dialog-branding-label-size);
 		letter-spacing: 0.01em;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.branding-tag .branding-text,
-	.branding-tag:not(:global(.headless)) .branding-by {
+	.brandingTag .brandingText,
+	.brandingTag:not(:global(.headless)) .brandingBy {
 		line-height: 1;
 	}
 
-	.branding-tag:not(:global(.headless)) .branding-wordmark-label {
+	.brandingTag:not(:global(.headless)) .brandingWordmarkLabel {
 		font-size: var(--consent-dialog-branding-label-size);
 		line-height: 1;
 	}
 
-	.branding-tag:not(:global(.headless)) .branding-wordmark {
+	.brandingTag:not(:global(.headless)) .brandingWordmark {
 		gap: 0.3125rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.branding-tag:not(:global(.headless)) .branding-c15-t-mark {
+	.brandingTag:not(:global(.headless)) .brandingC15TMark {
 		height: 0.9375rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.branding-tag:not(:global(.headless)) .branding-inth {
+	.brandingTag:not(:global(.headless)) .brandingInth {
 		height: 0.9375rem;
 		color: var(--c15t-text-on-primary, #fff);
 	}
 
-	.branding-tag-banner:not(:global(.headless)) {
+	.brandingTag[data-context="banner"]:not(:global(.headless)),
+	.brandingTag[data-context="iab-banner"]:not(:global(.headless)) {
 		position: relative;
 		align-self: flex-end;
 		top: auto;
@@ -460,7 +471,66 @@
 		border-radius: 0.75rem 0.75rem 0 0;
 	}
 
-	.branding-tag-dialog:not(:global(.headless)) {
+	.brandingTag[data-context="dialog"]:not(:global(.headless)),
+	.brandingTag[data-context="iab-dialog"]:not(:global(.headless)) {
+		right: var(--consent-dialog-card-padding-mobile);
+		bottom: 0;
+		transform: translateY(calc(100% + 1px));
+		border-top-width: 0;
+		border-radius: 0 0 0.75rem 0.75rem;
+	}
+
+	.brandingTag[data-context="manager"]:not(:global(.headless)) {
+		position: static;
+		min-height: auto;
+		max-width: none;
+		padding: 0;
+		border: none;
+		border-radius: 0;
+		color: var(--consent-widget-link-text-color);
+		background-color: transparent;
+		box-shadow: none;
+		z-index: auto;
+		text-decoration: none;
+		text-align: center;
+		flex-direction: row;
+		display: flex;
+		flex: 1;
+		gap: 0.5rem;
+		align-items: center;
+		justify-content: center;
+	}
+
+	:global(.c15t-dark)
+		.brandingTag[data-context="manager"]:not(:global(.headless)) {
+		color: var(--consent-widget-link-text-color-dark);
+	}
+
+	.brandingTag[data-context="manager"]:not(:global(.headless)) svg {
+		height: 1.2rem;
+	}
+
+	@media (min-width: 640px) {
+		.brandingTag[data-context="dialog"]:not(:global(.headless)),
+		.brandingTag[data-context="iab-dialog"]:not(:global(.headless)) {
+			right: var(--consent-dialog-card-padding);
+		}
+	}
+
+	/* Legacy React compat */
+	.brandingTagBanner:not(:global(.headless)) {
+		position: relative;
+		align-self: flex-end;
+		top: auto;
+		right: auto;
+		transform: none;
+		margin-inline-end: 0.75rem;
+		margin-block-end: -1px;
+		border-bottom-width: 0;
+		border-radius: 0.75rem 0.75rem 0 0;
+	}
+
+	.brandingTagDialog:not(:global(.headless)) {
 		right: var(--consent-dialog-card-padding-mobile);
 		bottom: 0;
 		transform: translateY(calc(100% + 1px));
@@ -469,34 +539,34 @@
 	}
 
 	@media (min-width: 640px) {
-		.branding-tag-dialog:not(:global(.headless)) {
+		.brandingTagDialog:not(:global(.headless)) {
 			right: var(--consent-dialog-card-padding);
 		}
 	}
 
 	@media (max-width: 480px) {
-		.branding-tag:not(:global(.headless)) {
+		.brandingTag:not(:global(.headless)) {
 			gap: 0.375rem;
 			max-width: calc(100% - 1rem);
 			padding: 0.3125rem 0.625rem;
 		}
 
-		.branding-tag .branding-copy,
-		.branding-tag:not(:global(.headless)) .branding-wordmark-label {
+		.brandingTag .brandingCopy,
+		.brandingTag:not(:global(.headless)) .brandingWordmarkLabel {
 			font-size: 0.625rem;
 		}
 
-		.branding-tag .branding-c15-t-mark,
-		.branding-tag:not(:global(.headless)) .branding-inth {
+		.brandingTag .brandingC15TMark,
+		.brandingTag:not(:global(.headless)) .brandingInth {
 			height: 0.8125rem;
 		}
 	}
 
-	.header-wrapper:not(:global(.headless)) {
+	.headerWrapper:not(:global(.headless)) {
 		position: relative;
 	}
 
-	.close-button:not(:global(.headless)) {
+	.closeButton:not(:global(.headless)) {
 		position: absolute;
 		right: 22px;
 		top: 22px;
@@ -523,13 +593,13 @@
 	}
 
 	/* Overlay animation — Vue Transition + Reka data-state fallback */
-	.overlay-visible:not(:global(.headless)) {
+	.overlayVisible:not(:global(.headless)) {
 		opacity: 1;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
 	}
 
-	.overlay-hidden:not(:global(.headless)) {
+	.overlayHidden:not(:global(.headless)) {
 		opacity: 0;
 		transition: opacity var(--consent-dialog-animation-duration)
 			var(--consent-dialog-animation-timing);
@@ -593,6 +663,18 @@
 		color: var(--consent-dialog-muted-color-dark);
 	}
 
+	.description[data-context="dialog"]:not(:global(.headless)) {
+		color: var(--consent-dialog-muted-color);
+		font-size: var(--consent-dialog-description-font-size);
+		font-weight: var(--consent-dialog-description-font-weight);
+		line-height: var(--consent-dialog-description-line-height);
+	}
+
+	:global(.c15t-dark)
+		.description[data-context="dialog"]:not(:global(.headless)) {
+		color: var(--consent-dialog-muted-color-dark);
+	}
+
 	.content:not(:global(.headless)) {
 		padding: var(--consent-dialog-card-padding);
 		padding-top: 0;
@@ -626,7 +708,7 @@
 		border-color: var(--consent-dialog-stroke-color-dark);
 	}
 
-	.footer:not(:global(.headless)).branding-footer {
+	.footer:not(:global(.headless)).brandingFooter {
 		position: relative;
 		min-height: 0;
 		height: 0;
@@ -635,17 +717,17 @@
 		overflow: visible;
 	}
 
-	.footer:not(:global(.headless)).branding-footer:empty {
+	.footer:not(:global(.headless)).brandingFooter:empty {
 		display: none;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.dialog-visible,
-		.dialog-hidden,
-		.content-visible,
-		.content-hidden,
-		.overlay-visible,
-		.overlay-hidden:not(:global(.headless)),
+		.dialogVisible,
+		.dialogHidden,
+		.contentVisible,
+		.contentHidden,
+		.overlayVisible,
+		.overlayHidden:not(:global(.headless)),
 		.overlay:not(:global(.headless))[data-state="open"],
 		.overlay:not(:global(.headless))[data-state="closed"],
 		.root:not(:global(.headless))[data-state="open"],
@@ -657,12 +739,41 @@
 		}
 	}
 
-	:global(.disable-animation) .overlay:not(:global(.headless))[data-state="open"],
-	:global(.disable-animation) .overlay:not(:global(.headless))[data-state="closed"],
+	.overlay[data-disable-animation]:not(:global(.headless))[data-state="open"],
+	.overlay[data-disable-animation]:not(:global(.headless))[data-state="closed"],
+	.root[data-disable-animation]:not(:global(.headless))[data-state="open"],
+	.root[data-disable-animation]:not(:global(.headless))[data-state="closed"],
+	.root[data-disable-animation][data-state="open"]
+		.container:not(:global(.headless)),
+	.root[data-disable-animation][data-state="closed"]
+		.container:not(:global(.headless)),
+	:global(.disable-animation)
+		.overlay:not(:global(.headless))[data-state="open"],
+	:global(.disable-animation)
+		.overlay:not(:global(.headless))[data-state="closed"],
 	:global(.disable-animation) .root:not(:global(.headless))[data-state="open"],
-	:global(.disable-animation) .root:not(:global(.headless))[data-state="closed"],
-	:global(.disable-animation) .root[data-state="open"] .container:not(:global(.headless)),
-	:global(.disable-animation) .root[data-state="closed"] .container:not(:global(.headless)) {
+	:global(.disable-animation)
+		.root:not(:global(.headless))[data-state="closed"],
+	:global(.disable-animation)
+		.root[data-state="open"]
+		.container:not(:global(.headless)),
+	:global(.disable-animation)
+		.root[data-state="closed"]
+		.container:not(:global(.headless)),
+	:global([data-disable-animation])
+		.overlay:not(:global(.headless))[data-state="open"],
+	:global([data-disable-animation])
+		.overlay:not(:global(.headless))[data-state="closed"],
+	:global([data-disable-animation])
+		.root:not(:global(.headless))[data-state="open"],
+	:global([data-disable-animation])
+		.root:not(:global(.headless))[data-state="closed"],
+	:global([data-disable-animation])
+		.root[data-state="open"]
+		.container:not(:global(.headless)),
+	:global([data-disable-animation])
+		.root[data-state="closed"]
+		.container:not(:global(.headless)) {
 		animation: none;
 	}
 }

@@ -71,7 +71,8 @@
 }
 
 .trigger:active,
-.trigger.dragging {
+.trigger.dragging,
+.trigger[data-dragging] {
 	cursor: grabbing;
 	transform: scale(1.02);
 }
@@ -86,16 +87,19 @@
 }
 
 /* Size variants */
+.trigger[data-size="sm"],
 .sm {
 	width: var(--cdt-size-sm);
 	height: var(--cdt-size-sm);
 }
 
+.trigger[data-size="md"],
 .md {
 	width: var(--cdt-size-md);
 	height: var(--cdt-size-md);
 }
 
+.trigger[data-size="lg"],
 .lg {
 	width: var(--cdt-size-lg);
 	height: var(--cdt-size-lg);
@@ -144,49 +148,55 @@
 	height: 16px;
 }
 
+.trigger:has(.text)[data-size="sm"],
 .trigger:has(.text).sm {
 	padding: var(--c15t-space-xs, 6px) var(--c15t-space-sm, 10px);
 }
 
+.trigger:has(.text)[data-size="sm"] .icon,
 .trigger:has(.text).sm .icon {
 	width: 14px;
 	height: 14px;
 }
 
+.trigger:has(.text)[data-size="sm"] .text,
 .trigger:has(.text).sm .text {
 	font-size: var(--c15t-font-size-xs, 12px);
 }
 
+.trigger:has(.text)[data-size="lg"],
 .trigger:has(.text).lg {
 	padding: var(--c15t-space-md, 12px) var(--c15t-space-lg, 20px);
 }
 
+.trigger:has(.text)[data-size="lg"] .icon,
 .trigger:has(.text).lg .icon {
 	width: 20px;
 	height: 20px;
 }
 
+.trigger:has(.text)[data-size="lg"] .text,
 .trigger:has(.text).lg .text {
 	font-size: var(--c15t-font-size-md, 16px);
 }
 
 /* Corner positioning utilities */
-.bottom-right {
+.bottomRight {
 	right: var(--cdt-offset);
 	bottom: var(--cdt-offset);
 }
 
-.bottom-left {
+.bottomLeft {
 	bottom: var(--cdt-offset);
 	left: var(--cdt-offset);
 }
 
-.top-right {
+.topRight {
 	top: var(--cdt-offset);
 	right: var(--cdt-offset);
 }
 
-.top-left {
+.topLeft {
 	top: var(--cdt-offset);
 	left: var(--cdt-offset);
 }

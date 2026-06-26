@@ -1,8 +1,9 @@
-<script setup lang="ts">
-import { computed } from 'vue';
+<script
+	setup
+	lang="ts"
+>
 import bannerStyles from '@c15t/styles/consent-banner.module.css';
-import dialogStyles from '@c15t/styles/consent-dialog.module.css';
-import widgetStyles from '@c15t/styles/consent-widget.module.css';
+import { computed } from 'vue';
 import { useConsentConfig, useConsentInit } from '#c15t/composables';
 import ConsentLegalLinks from './consent-legal-links.vue';
 
@@ -20,16 +21,6 @@ const legalLinks = computed(() => {
 	return config.value.dialogLegalLinks;
 });
 
-const moduleClass = computed(() => {
-	if (props.context === 'dialog') {
-		return dialogStyles.description;
-	}
-	if (props.context === 'manager') {
-		return widgetStyles.description;
-	}
-	return bannerStyles.description;
-});
-
 const linkContext = computed(() =>
 	props.context === 'manager' ? 'manager' : props.context
 );
@@ -39,16 +30,15 @@ const linkContext = computed(() =>
 	<div
 		v-bind="config.components?.description?.[context]"
 		data-testid="consent-description"
-		:class="moduleClass"
+		:class="bannerStyles.description"
+		:data-context="context"
 	>
 		<slot>
 			<template v-if="context === 'banner'">
 				{{ init?.translations?.translations?.cookieBanner?.description }}
 			</template>
 			<template v-else>
-				{{
-					init?.translations?.translations?.consentManagerDialog?.description
-				}}
+				{{ init?.translations?.translations?.consentManagerDialog?.description }}
 			</template>
 		</slot>
 		<ConsentLegalLinks

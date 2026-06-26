@@ -1,4 +1,4 @@
-@import url('./animations/enter-exit.css');
+@import url("./animations/enter-exit.css");
 
 :root {
 	/* Widget Colors */
@@ -107,6 +107,15 @@
 		color: var(--consent-widget-text-muted-color-dark);
 	}
 
+	.description[data-context="manager"]:not(:global(.headless)) {
+		color: var(--consent-widget-text-muted-color);
+	}
+
+	:global(.c15t-dark)
+		.description[data-context="manager"]:not(:global(.headless)) {
+		color: var(--consent-widget-text-muted-color-dark);
+	}
+
 	.content:not(:global(.headless)) {
 		padding: 0 var(--consent-widget-padding);
 		padding-bottom: var(--consent-widget-padding);
@@ -136,41 +145,44 @@
 		}
 	}
 
-	.footer-sub-group:not(:global(.headless)) {
+	.footerSubGroup:not(:global(.headless)) {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
 	}
 
-	.footer-fill:not(:global(.headless)) {
+	.footer:not(:global(.headless))[data-fill],
+	.footerFill:not(:global(.headless)) {
 		flex-direction: column;
 	}
 
-	.footer-column:not(:global(.headless)) {
+	.footer:not(:global(.headless))[data-direction="column"],
+	.footerColumn:not(:global(.headless)) {
 		flex-direction: column;
 	}
 
-	.footer-sub-group-fill:not(:global(.headless)) {
+	.footerSubGroup:not(:global(.headless))[data-fill],
+	.footerSubGroup:not(:global(.headless))[data-direction="column"],
+	.footerSubGroupFill:not(:global(.headless)),
+	.footerSubGroupColumn:not(:global(.headless)) {
 		width: 100%;
-	}
-
-	.footer-sub-group-column:not(:global(.headless)) {
-		width: 100%;
-	}
-
-	.action-button-fill:not(:global(.headless)) {
-		width: 100%;
-		flex: 1;
 	}
 
 	@media (max-width: 640px) {
-		.footer-sub-group:not(:global(.headless)) {
+		.footerSubGroup:not(:global(.headless)) {
 			width: 100%;
 		}
-		.footer-sub-group:not(:global(.headless)) button {
+
+		.footerSubGroup:not(:global(.headless)) button {
 			width: 100%;
 		}
+	}
+
+	.footer:not(:global(.headless))[data-fill] button,
+	.actionButtonFill:not(:global(.headless)) {
+		width: 100%;
+		flex: 1;
 	}
 
 	.branding:not(:global(.headless)) {
@@ -186,7 +198,8 @@
 		border-color: var(--consent-widget-border-color-dark);
 	}
 
-	.branding-link:not(:global(.headless)) {
+	.brandingLink[data-context="manager"]:not(:global(.headless)),
+	.brandingLink:not(:global(.headless)) {
 		color: var(--consent-widget-link-text-color);
 		text-decoration: none;
 		text-align: center;
@@ -198,31 +211,34 @@
 		justify-content: center;
 	}
 
-	:global(.c15t-dark) .branding-link:not(:global(.headless)) {
+	:global(.c15t-dark)
+		.brandingLink[data-context="manager"]:not(:global(.headless)),
+	:global(.c15t-dark) .brandingLink:not(:global(.headless)) {
 		color: var(--consent-widget-link-text-color-dark);
 	}
 
-	.branding-link:not(:global(.headless)) svg {
+	.brandingLink:not(:global(.headless)) svg,
+	.brandingLink[data-context="manager"]:not(:global(.headless)) svg {
 		height: 1.2rem;
 	}
 
 	/* Position variants */
-	.bottom-left:not(:global(.headless)) {
+	.bottomLeft:not(:global(.headless)) {
 		left: 0px;
 		bottom: 0px;
 	}
 
-	.bottom-right:not(:global(.headless)) {
+	.bottomRight:not(:global(.headless)) {
 		right: 0px;
 		bottom: 0px;
 	}
 
-	.top-left:not(:global(.headless)) {
+	.topLeft:not(:global(.headless)) {
 		left: 0px;
 		top: 0px;
 	}
 
-	.top-right:not(:global(.headless)) {
+	.topRight:not(:global(.headless)) {
 		right: 0px;
 		top: 0px;
 	}

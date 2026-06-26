@@ -1,6 +1,9 @@
-<script setup lang="ts">
-import { computed, ref, toValue } from 'vue';
+<script
+	setup
+	lang="ts"
+>
 import dialogStyles from '@c15t/styles/iab-consent-dialog.module.css';
+import { computed, ref, toValue } from 'vue';
 import { useConsentInit } from '#c15t/composables';
 import ConsentSwitch from './consent-switch.vue';
 
@@ -44,32 +47,37 @@ const showVendors = ref(false);
 
 const iabT = computed(
 	() =>
-		(toValue(init)?.translations?.translations as { iab?: Record<string, unknown> })
-			?.iab as {
-			preferenceCenter?: {
-				purposeItem?: {
-					partners?: string;
-					vendorsUseLegitimateInterest?: string;
-					examples?: string;
-					partnersUsingPurpose?: string;
-					objectButton?: string;
-					objected?: string;
-					rightToObject?: string;
-				};
-			};
-		} | undefined,
+		(
+			toValue(init)?.translations?.translations as {
+				iab?: Record<string, unknown>;
+			}
+		)?.iab as
+			| {
+					preferenceCenter?: {
+						purposeItem?: {
+							partners?: string;
+							vendorsUseLegitimateInterest?: string;
+							examples?: string;
+							partnersUsingPurpose?: string;
+							objectButton?: string;
+							objected?: string;
+							rightToObject?: string;
+						};
+					};
+			  }
+			| undefined
 );
 
 const legIntVendors = computed(() =>
-	props.purpose.vendors.filter((vendor) => vendor.usesLegitimateInterest),
+	props.purpose.vendors.filter((vendor) => vendor.usesLegitimateInterest)
 );
 
 const consentVendors = computed(() =>
-	props.purpose.vendors.filter((vendor) => !vendor.usesLegitimateInterest),
+	props.purpose.vendors.filter((vendor) => !vendor.usesLegitimateInterest)
 );
 
 const isPurposeLiAllowed = computed(
-	() => props.purposeLegitimateInterests?.[props.purpose.id] ?? true,
+	() => props.purposeLegitimateInterests?.[props.purpose.id] ?? true
 );
 
 const checked = computed({
@@ -114,8 +122,14 @@ function handlePurposeLiObjection() {
 					stroke="currentColor"
 					stroke-width="2"
 				>
-					<path v-if="isExpanded" d="M19 9l-7 7-7-7" />
-					<path v-else d="M9 5l7 7-7 7" />
+					<path
+						v-if="isExpanded"
+						d="M19 9l-7 7-7-7"
+					/>
+					<path
+						v-else
+						d="M9 5l7 7-7 7"
+					/>
 				</svg>
 				<div :class="dialogStyles.purposeInfo">
 					<h3 :class="dialogStyles.purposeName">
@@ -128,17 +142,22 @@ function handlePurposeLiObjection() {
 							stroke="currentColor"
 							stroke-width="2"
 						>
-							<rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+							<rect
+								x="3"
+								y="11"
+								width="18"
+								height="11"
+								rx="2"
+								ry="2"
+							/>
 							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
 						</svg>
 					</h3>
 					<p :class="dialogStyles.purposeMeta">
-						{{
-							(iabT?.preferenceCenter?.purposeItem?.partners ?? '').replace(
+						{{ (iabT?.preferenceCenter?.purposeItem?.partners ?? '').replace(
 								'{count}',
 								String(purpose.vendors.length),
-							)
-						}}
+							) }}
 					</p>
 				</div>
 			</button>
@@ -149,10 +168,11 @@ function handlePurposeLiObjection() {
 			/>
 		</div>
 
-		<div v-if="isExpanded" :class="dialogStyles.purposeContent">
-			<p :class="dialogStyles.purposeDescription">
-				{{ purpose.description }}
-			</p>
+		<div
+			v-if="isExpanded"
+			:class="dialogStyles.purposeContent"
+		>
+			<p :class="dialogStyles.purposeDescription">{{ purpose.description }}</p>
 
 			<div
 				v-if="legIntVendors.length > 0"
@@ -161,28 +181,22 @@ function handlePurposeLiObjection() {
 				<div :class="dialogStyles.purposeLiSectionHeader">
 					<div :class="dialogStyles.purposeLiInfo">
 						<span>
-							{{
-								(
+							{{ (
 									iabT?.preferenceCenter?.purposeItem
 										?.vendorsUseLegitimateInterest ?? ''
-								).replace('{count}', String(legIntVendors.length))
-							}}
+								).replace('{count}', String(legIntVendors.length)) }}
 						</span>
 					</div>
 					<button
 						type="button"
-						:class="[
-							dialogStyles.objectButton,
-							!isPurposeLiAllowed ? dialogStyles.objectButtonActive : '',
-						]"
+						:class="dialogStyles.objectButton"
+						:data-active="!isPurposeLiAllowed ? true : undefined"
 						:aria-pressed="!isPurposeLiAllowed"
 						@click="handlePurposeLiObjection"
 					>
-						{{
-							isPurposeLiAllowed
+						{{ isPurposeLiAllowed
 								? iabT?.preferenceCenter?.purposeItem?.objectButton
-								: iabT?.preferenceCenter?.purposeItem?.objected
-						}}
+								: iabT?.preferenceCenter?.purposeItem?.objected }}
 					</button>
 				</div>
 				<p :class="dialogStyles.liExplanation">
@@ -199,7 +213,10 @@ function handlePurposeLiObjection() {
 					{{ iabT?.preferenceCenter?.purposeItem?.examples }}
 					({{ purpose.illustrations.length }})
 				</button>
-				<ul v-if="showExamples" :class="dialogStyles.examplesList">
+				<ul
+					v-if="showExamples"
+					:class="dialogStyles.examplesList"
+				>
 					<li
 						v-for="(illustration, index) in purpose.illustrations"
 						:key="index"
@@ -218,7 +235,10 @@ function handlePurposeLiObjection() {
 					{{ iabT?.preferenceCenter?.purposeItem?.partnersUsingPurpose }}
 					({{ purpose.vendors.length }})
 				</button>
-				<ul v-if="showVendors" :class="dialogStyles.vendorLinks">
+				<ul
+					v-if="showVendors"
+					:class="dialogStyles.vendorLinks"
+				>
 					<li
 						v-for="vendor in purpose.vendors"
 						:key="String(vendor.id)"

@@ -1,13 +1,13 @@
-@import url('./animations/accordion.css');
+@import url("./animations/accordion.css");
 
 :root {
-	--accordion-padding: var(--c15t-space-sm);
+	--accordion-padding: var(--c15t-space-md);
 	--accordion-stack-gap: 0.75rem;
 	--accordion-radius: var(--c15t-radius-md);
 	--accordion-duration: var(--c15t-duration-normal);
 	--accordion-ease: var(--c15t-easing);
 	--accordion-icon-size: 1.25rem;
-	--accordion-gap: var(--c15t-space-xs);
+	--accordion-gap: 0.625rem;
 
 	--accordion-background-color: var(--c15t-surface);
 	--accordion-background-color-dark: var(--c15t-surface);
@@ -17,12 +17,12 @@
 	--accordion-border-color-dark: var(--c15t-border);
 	--accordion-text-color: var(--c15t-text);
 	--accordion-text-color-dark: var(--c15t-text);
-	--accordion-arrow-color: hsl(0, 0%, 63.92%);
-	--accordion-arrow-color-dark: hsl(0, 0%, 80%);
-	--accordion-content-color: hsl(0, 0%, 36.08%);
-	--accordion-content-color-dark: hsl(0, 0%, 60%);
-	--accordion-focus-ring: hsl(227.93, 100%, 63.92%);
-	--accordion-focus-ring-dark: hsl(228.07, 69.8%, 48.04%);
+	--accordion-arrow-color: var(--c15t-text-muted);
+	--accordion-arrow-color-dark: var(--c15t-text-muted);
+	--accordion-content-color: var(--c15t-text-muted);
+	--accordion-content-color-dark: var(--c15t-text-muted);
+	--accordion-focus-ring: var(--c15t-primary);
+	--accordion-focus-ring-dark: var(--c15t-primary);
 	--accordion-title-size: var(--c15t-font-size-sm);
 }
 
@@ -53,7 +53,8 @@
 		background-color: var(--accordion-background-color-dark);
 	}
 
-	:global(.c15t-dark) .item:not(:global(.headless)):is(:hover, [data-state="open"]) {
+	:global(.c15t-dark)
+		.item:not(:global(.headless)):is(:hover, [data-state="open"]) {
 		background-color: var(--accordion-background-hover-dark);
 	}
 
@@ -62,11 +63,12 @@
 		outline-offset: -1px;
 	}
 
-	:global(.c15t-dark) .item:not(:global(.headless)):has(.trigger:focus-visible) {
+	:global(.c15t-dark)
+		.item:not(:global(.headless)):has(.trigger:focus-visible) {
 		outline-color: var(--accordion-focus-ring-dark);
 	}
 
-	.item-header:not(:global(.headless)) {
+	.itemHeader:not(:global(.headless)) {
 		grid-column: 1;
 		grid-row: 1;
 		margin: 0;
@@ -76,11 +78,10 @@
 		font: inherit;
 		font-weight: inherit;
 		background-color: transparent;
-		transition: background-color var(--accordion-duration)
-			var(--accordion-ease);
+		transition: background-color var(--accordion-duration) var(--accordion-ease);
 	}
 
-	:global(.c15t-dark) .item-header:not(:global(.headless)) {
+	:global(.c15t-dark) .itemHeader:not(:global(.headless)) {
 		color: var(--accordion-text-color-dark);
 	}
 
@@ -104,8 +105,9 @@
 		min-width: 0;
 		min-height: calc(var(--accordion-icon-size) + 0.25rem);
 		font-size: var(--accordion-title-size);
-		line-height: var(--c15t-line-height-tight);
-		font-weight: var(--c15t-font-weight-regular);
+		line-height: 1.25rem;
+		letter-spacing: -0.006em;
+		font-weight: var(--c15t-font-weight-medium);
 		padding: 0;
 		border: 0;
 		background: none;
@@ -172,38 +174,40 @@
 		padding: 0;
 		color: var(--accordion-content-color);
 		font-size: 0.875rem;
-		line-height: 1.5;
+		line-height: 1.25rem;
+		letter-spacing: -0.006em;
 	}
 
 	.content:not(:global(.headless))[data-state="open"] {
-		animation: accordion-slide-down var(--accordion-duration) ease-out;
+		animation: accordionSlideDown var(--accordion-duration) ease-out;
 	}
 
 	.content:not(:global(.headless))[data-state="closed"] {
 		pointer-events: none;
-		animation: accordion-slide-up var(--accordion-duration) ease-in;
+		animation: accordionSlideUp var(--accordion-duration) ease-in;
 	}
 
-	.content-viewport:not(:global(.headless)) {
+	.contentViewport:not(:global(.headless)) {
 		min-height: 0;
 		overflow: hidden;
 		padding-top: 0;
 		padding-inline-end: var(--accordion-padding);
 		padding-inline-start: calc(
-			var(--accordion-icon-size) + var(--accordion-gap)
+			var(--accordion-icon-size) +
+			var(--accordion-gap)
 		);
 	}
 
-	.content[data-state="open"] .content-viewport {
+	.content[data-state="open"] .contentViewport {
 		padding-bottom: var(--accordion-padding);
 	}
 
-	.content[data-state="closed"] .content-viewport {
+	.content[data-state="closed"] .contentViewport {
 		padding-bottom: 0;
 	}
 
-	.content-inner:not(:global(.headless)) {
-		padding-top: 0;
+	.contentInner:not(:global(.headless)) {
+		padding-top: 0.75rem;
 		opacity: 1;
 		transform: translateY(0);
 		transition:
@@ -212,7 +216,7 @@
 		will-change: opacity, transform;
 	}
 
-	.content[data-state="closed"] .content-inner:not(:global(.headless)) {
+	.content[data-state="closed"] .contentInner:not(:global(.headless)) {
 		opacity: 0;
 		transform: translateY(-0.125rem);
 	}
@@ -221,15 +225,23 @@
 		color: var(--accordion-content-color-dark);
 	}
 
-	:global(.disable-animation) .content:not(:global(.headless))[data-state="open"],
-	:global(.disable-animation) .content:not(:global(.headless))[data-state="closed"] {
+	:global([data-disable-animation])
+		.content:not(:global(.headless))[data-state="open"],
+	:global([data-disable-animation])
+		.content:not(:global(.headless))[data-state="closed"],
+	:global(.disable-animation)
+		.content:not(:global(.headless))[data-state="open"],
+	:global(.disable-animation)
+		.content:not(:global(.headless))[data-state="closed"] {
 		animation: none;
 	}
 
-	:global(.disable-animation) .content-inner:not(:global(.headless)) {
+	:global([data-disable-animation]) .contentInner:not(:global(.headless)),
+	:global(.disable-animation) .contentInner:not(:global(.headless)) {
 		transition: none;
 	}
 
+	:global([data-disable-animation]) .arrow:not(:global(.headless)),
 	:global(.disable-animation) .arrow:not(:global(.headless)) {
 		transition: none;
 	}
@@ -243,7 +255,7 @@
 			animation: none;
 		}
 
-		.content-inner:not(:global(.headless)) {
+		.contentInner:not(:global(.headless)) {
 			transition: none;
 		}
 	}

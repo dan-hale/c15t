@@ -95,12 +95,12 @@
 		pointer-events: none;
 	}
 
-	.content-viewport {
+	.contentViewport {
 		min-height: 0;
 		overflow: hidden;
 	}
 
-	.content-inner {
+	.contentInner {
 		color: var(--preference-item-content-color);
 	}
 

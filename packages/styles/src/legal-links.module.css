@@ -12,36 +12,36 @@
 }
 
 @layer components {
-	.legal-links:not(:global(.headless)) {
+	.legalLinks:not(:global(.headless)) {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--legal-links-gap);
 		align-items: center;
 	}
 
-	.legal-link:not(:global(.headless)) {
+	.legalLink:not(:global(.headless)) {
 		color: var(--legal-links-color);
 		text-decoration: var(--legal-links-text-decoration);
 		font-size: var(--legal-links-font-size);
 		transition: var(--legal-links-transition);
 	}
 
-	:global(.c15t-dark) .legal-link:not(:global(.headless)) {
+	:global(.c15t-dark) .legalLink:not(:global(.headless)) {
 		color: var(--legal-links-focus-color-dark);
 	}
 
-	.legal-link:not(:global(.headless)):hover {
+	.legalLink:not(:global(.headless)):hover {
 		text-decoration: var(--legal-links-text-decoration-hover);
 	}
 
-	.legal-link:not(:global(.headless)):focus {
+	.legalLink:not(:global(.headless)):focus {
 		outline: none;
 		text-decoration: underline;
 	}
 
 	/* Reduced motion preference */
 	@media (prefers-reduced-motion: reduce) {
-		.legal-link:not(:global(.headless)) {
+		.legalLink:not(:global(.headless)) {
 			transition: none;
 		}
 	}

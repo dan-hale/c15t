@@ -1,4 +1,4 @@
-@keyframes accordion-slide-down {
+@keyframes accordionSlideDown {
 	from {
 		height: 0;
 	}
@@ -8,7 +8,7 @@
 	}
 }
 
-@keyframes accordion-slide-up {
+@keyframes accordionSlideUp {
 	from {
 		height: var(--reka-accordion-content-height);
 	}

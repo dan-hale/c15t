@@ -9,7 +9,7 @@ import {
 } from '#c15t/composables';
 import { FocusScope } from 'reka-ui';
 import ConsentDescription from './consent-description.vue';
-import ConsentPolicyFooter from './consent-policy-footer.vue';
+import ConsentBannerFooter from './consent-banner-footer.vue';
 import ConsentTag from './consent-tag.vue';
 import { useConsentScrollLock } from '../composables/use-consent-scroll-lock';
 
@@ -107,7 +107,7 @@ const bannerPosition = computed(
 								</div>
 								<ConsentDescription context="banner" />
 							</div>
-							<ConsentPolicyFooter surface="banner" />
+							<ConsentBannerFooter />
 						</div>
 					</FocusScope>
 				</div>

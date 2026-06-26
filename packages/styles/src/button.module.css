@@ -353,7 +353,7 @@
 	}
 
 	/* Icon Styles */
-	.button-icon:not(:global(.headless)) {
+	.buttonIcon:not(:global(.headless)) {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
